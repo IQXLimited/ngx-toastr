@@ -31,68 +31,80 @@ import { Toast, ToastrService, ToastPackage } from '../lib/public_api';
     }
   `],
     template: `
-  <div class="row" [style.display]="state().value === 'inactive' ? 'none' : ''">
+  <div class="row" [style.display]="state().value === 'inactive' ? 'none' : ''" [class]="state()">
     <div class="col-9">
-      <div *ngIf="title" [class]="options.titleClass" [attr.aria-label]="title">
-        {{ title }}
-      </div>
-      <div *ngIf="message && options.enableHtml" role="alert"
-        [class]="options.messageClass" [innerHTML]="message">
-      </div>
-      <div *ngIf="message && !options.enableHtml" role="alert"
-        [class]="options.messageClass" [attr.aria-label]="message">
-        {{ message }}
-      </div>
+      @if (title) {
+        <div [class]="options.titleClass" [attr.aria-label]="title">
+          {{ title }}
+        </div>
+      }
+      @if (message) {
+        @if (options.enableHtml) {
+          <div role="alert"
+            [class]="options.messageClass" [innerHTML]="message">
+          </div>
+        } @else {
+          <div role="alert"
+            [class]="options.messageClass" [attr.aria-label]="message">
+            {{ message }}
+          </div>
+        }
+      }
     </div>
     <div class="col-3 text-right">
-      <a *ngIf="!options.closeButton" class="btn btn-pink btn-sm" (click)="action($event)">
-        {{ undoString }}
-      </a>
-      <a *ngIf="options.closeButton" (click)="remove()" class="btn btn-pink btn-sm">
-        close
-      </a>
+      @if (options.closeButton) {
+        <a (click)="remove()" class="btn btn-pink btn-sm">
+          close
+        </a>
+      } @else {
+        <a class="btn btn-pink btn-sm" (click)="action($event)">
+          {{ undoString }}
+        </a>
+      }
     </div>
   </div>
-  <div *ngIf="options.progressBar">
-    <div class="toast-progress" [style.width]="width() + '%'"></div>
-  </div>
+  @if (options.progressBar) {
+    <div>
+      <div class="toast-progress" [style.width]="width() + '%'"></div>
+    </div>
+  }
   `,
-    animations: [
-        trigger('flyInOut', [
-            state('inactive', style({
-                opacity: 0,
-            })),
-            transition('inactive => active', animate('400ms ease-out', keyframes([
-                style({
-                    transform: 'translate3d(100%, 0, 0) skewX(-30deg)',
-                    opacity: 0,
-                }),
-                style({
-                    transform: 'skewX(20deg)',
-                    opacity: 1,
-                }),
-                style({
-                    transform: 'skewX(-5deg)',
-                    opacity: 1,
-                }),
-                style({
-                    transform: 'none',
-                    opacity: 1,
-                }),
-            ]))),
-            transition('active => removed', animate('400ms ease-out', keyframes([
-                style({
-                    opacity: 1,
-                }),
-                style({
-                    transform: 'translate3d(100%, 0, 0) skewX(30deg)',
-                    opacity: 0,
-                }),
-            ]))),
-        ]),
-    ],
+    // animations: [
+    //     trigger('flyInOut', [
+    //         state('inactive', style({
+    //             opacity: 0,
+    //         })),
+    //         transition('inactive => active', animate('400ms ease-out', keyframes([
+    //             style({
+    //                 transform: 'translate3d(100%, 0, 0) skewX(-30deg)',
+    //                 opacity: 0,
+    //             }),
+    //             style({
+    //                 transform: 'skewX(20deg)',
+    //                 opacity: 1,
+    //             }),
+    //             style({
+    //                 transform: 'skewX(-5deg)',
+    //                 opacity: 1,
+    //             }),
+    //             style({
+    //                 transform: 'none',
+    //                 opacity: 1,
+    //             }),
+    //         ]))),
+    //         transition('active => removed', animate('400ms ease-out', keyframes([
+    //             style({
+    //                 opacity: 1,
+    //             }),
+    //             style({
+    //                 transform: 'translate3d(100%, 0, 0) skewX(30deg)',
+    //                 opacity: 0,
+    //             }),
+    //         ]))),
+    //     ]),
+    // ],
     preserveWhitespaces: false,
-    standalone: false
+    styleUrl: "./pink.toast.component.scss"
 })
 export class PinkToast extends Toast {
   // used for demo purposes

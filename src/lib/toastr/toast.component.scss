@@ -1,0 +1,13 @@
+:host {
+  display: block;
+  opacity: 0;
+  transition: opacity 300ms ease-in-out;
+}
+
+:host(.active) {
+  opacity: 1;
+}
+
+:host(.removed) {
+  opacity: 0;
+}

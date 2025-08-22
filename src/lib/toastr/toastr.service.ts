@@ -1,4 +1,4 @@
-import { ComponentRef, Inject, Injectable, Injector, NgZone, SecurityContext } from '@angular/core';
+import { ComponentRef, inject, Inject, Injectable, Injector, NgZone, SecurityContext } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { Observable } from 'rxjs';
@@ -45,21 +45,21 @@ export class ToastrService {
   previousToastMessage: string | undefined;
   private index = 0;
 
-  constructor(
-    @Inject(TOAST_CONFIG) token: ToastToken,
-    private overlay: Overlay,
-    private _injector: Injector,
-    private sanitizer: DomSanitizer,
-    private ngZone: NgZone,
-  ) {
+  public readonly token: ToastToken = inject(TOAST_CONFIG);
+  private readonly overlay: Overlay = inject(Overlay);
+  private readonly sanitizer: DomSanitizer = inject(DomSanitizer);
+  private readonly ngZone: NgZone = inject(NgZone);
+  private readonly _injector: Injector = inject(Injector);
+
+  constructor() {
     this.toastrConfig = {
-      ...token.default,
-      ...token.config,
+      ...this.token.default,
+      ...this.token.config,
     };
-    if (token.config.iconClasses) {
+    if (this.token.config.iconClasses) {
       this.toastrConfig.iconClasses = {
-        ...token.default.iconClasses,
-        ...token.config.iconClasses,
+        ...this.token.default.iconClasses,
+        ...this.token.config.iconClasses,
       };
     }
   }

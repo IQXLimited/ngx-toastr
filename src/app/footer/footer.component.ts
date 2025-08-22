@@ -22,7 +22,6 @@ import { Component, VERSION } from '@angular/core';
       }
     `,
     ],
-    standalone: false
 })
 export class FooterComponent {
   version = VERSION.full;

@@ -8,13 +8,14 @@ import { Toast, ToastrService, ToastPackage } from '../lib/public_api';
     <div class="toast" role="alert" [style.display]="state().value === 'inactive' ? 'none' : ''">
       <div class="toast-header">
         <strong class="me-auto">{{ title || 'default header' }}</strong>
-        <button
-          type="button"
-          class="btn-close"
-          aria-label="Close"
-          *ngIf="options.closeButton"
-          (click)="remove()"
-        ></button>
+        @if (options.closeButton) {
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Close"
+            (click)="remove()"
+          ></button>
+        }
       </div>
       <div class="toast-body">
         <div
@@ -31,8 +32,7 @@ import { Toast, ToastrService, ToastPackage } from '../lib/public_api';
       </div>
     </div>
   `,
-    preserveWhitespaces: false,
-    standalone: false
+    preserveWhitespaces: false
 })
 export class BootstrapToast extends Toast {
   // used for demo purposes

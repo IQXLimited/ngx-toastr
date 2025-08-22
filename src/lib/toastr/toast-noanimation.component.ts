@@ -1,11 +1,9 @@
-import { NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, ModuleWithProviders, signal } from '@angular/core';
+import { ChangeDetectionStrategy, inject, makeEnvironmentProviders, signal } from '@angular/core';
 import {
   ApplicationRef,
   Component,
   HostBinding,
   HostListener,
-  NgModule,
   OnDestroy,
 } from '@angular/core';
 
@@ -23,24 +21,41 @@ import { ToastrService } from './toastr.service';
 @Component({
     selector: '[toast-component]',
     template: `
-  <button *ngIf="options.closeButton" (click)="remove()" type="button" class="toast-close-button" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
-  <div *ngIf="title" [class]="options.titleClass" [attr.aria-label]="title">
-    {{ title }} <ng-container *ngIf="duplicatesCount">[{{ duplicatesCount + 1 }}]</ng-container>
-  </div>
-  <div *ngIf="message && options.enableHtml" role="alert"
-    [class]="options.messageClass" [innerHTML]="message">
-  </div>
-  <div *ngIf="message && !options.enableHtml" role="alert"
-    [class]="options.messageClass" [attr.aria-label]="message">
-    {{ message }}
-  </div>
-  <div *ngIf="options.progressBar">
-    <div class="toast-progress" [style.width]="width() + '%'"></div>
-  </div>
+  @if (options.closeButton) {
+    <button (click)="remove()" type="button" class="toast-close-button" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  }
+  @if (title) {
+    <div [class]="options.titleClass" [attr.aria-label]="title">
+      <span>
+        {{ title }} 
+        @if (duplicatesCount) {
+          <ng-container>
+            [{{ duplicatesCount + 1 }}]
+          </ng-container>
+        }
+      </span>
+    </div>
+  }
+  @if (options.enableHtml) {
+    @if (message) {
+      <div role="alert"
+        [class]="options.messageClass" [innerHTML]="message">
+      </div>
+    } @else {
+      <div role="alert"
+        [class]="options.messageClass" [attr.aria-label]="message">
+        {{ message }}
+      </div>
+    }
+  }
+  @if (options.progressBar) {
+    <div>
+      <div class="toast-progress" [style.width]="width() + '%'"></div>
+    </div>
+  }
   `,
-    imports: [NgIf],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ToastNoAnimation implements OnDestroy {
@@ -74,28 +89,28 @@ export class ToastNoAnimation implements OnDestroy {
   private sub2: Subscription;
   private sub3: Subscription;
 
-  constructor(
-    protected toastrService: ToastrService,
-    public toastPackage: ToastPackage,
-    protected appRef: ApplicationRef,
-  ) {
-    this.message = toastPackage.message;
-    this.title = toastPackage.title;
-    this.options = toastPackage.config;
-    this.originalTimeout = toastPackage.config.timeOut;
-    this.toastClasses = `${toastPackage.toastType} ${
-      toastPackage.config.toastClass
+  protected readonly toastrService: ToastrService = inject(ToastrService);
+  public readonly toastPackage: ToastPackage = inject(ToastPackage);
+  protected readonly appRef: ApplicationRef = inject(ApplicationRef);
+
+  constructor() {
+    this.message = this.toastPackage.message;
+    this.title = this.toastPackage.title;
+    this.options = this.toastPackage.config;
+    this.originalTimeout = this.toastPackage.config.timeOut;
+    this.toastClasses = `${this.toastPackage.toastType} ${
+      this.toastPackage.config.toastClass
     }`;
-    this.sub = toastPackage.toastRef.afterActivate().subscribe(() => {
+    this.sub = this.toastPackage.toastRef.afterActivate().subscribe(() => {
       this.activateToast();
     });
-    this.sub1 = toastPackage.toastRef.manualClosed().subscribe(() => {
+    this.sub1 = this.toastPackage.toastRef.manualClosed().subscribe(() => {
       this.remove();
     });
-    this.sub2 = toastPackage.toastRef.timeoutReset().subscribe(() => {
+    this.sub2 = this.toastPackage.toastRef.timeoutReset().subscribe(() => {
       this.resetTimeout();
     });
-    this.sub3 = toastPackage.toastRef.countDuplicate().subscribe(count => {
+    this.sub3 = this.toastPackage.toastRef.countDuplicate().subscribe(count => {
       this.duplicatesCount = count;
     });
   }
@@ -222,24 +237,3 @@ export const DefaultNoAnimationsGlobalConfig: GlobalConfig = {
   ...DefaultNoComponentGlobalConfig,
   toastComponent: ToastNoAnimation,
 };
-
-@NgModule({
-  imports: [ToastNoAnimation],
-  exports: [ToastNoAnimation],
-})
-export class ToastNoAnimationModule {
-  static forRoot(config: Partial<GlobalConfig> = {}): ModuleWithProviders<ToastNoAnimationModule> {
-    return {
-      ngModule: ToastNoAnimationModule,
-      providers: [
-        {
-          provide: TOAST_CONFIG,
-          useValue: {
-            default: DefaultNoAnimationsGlobalConfig,
-            config,
-          },
-        },
-      ],
-    };
-  }
-}

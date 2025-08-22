@@ -1,11 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
 import { TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { Toast } from '../../lib/public_api';
-import { ActiveToast, ToastrModule } from '../../lib/public_api';
+import { provideToastr, Toast } from '../../lib/public_api';
+import { ActiveToast } from '../../lib/public_api';
 import { NotyfToast } from '../notyf.toast';
 import { PinkToast } from '../pink.toast';
 import { HomeComponent } from './home.component';
@@ -13,18 +11,18 @@ import { HomeComponent } from './home.component';
 describe('AppComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        ToastrModule.forRoot({
+      providers: [
+        provideToastr({
           timeOut: 800,
           progressBar: true,
           onActivateTick: true,
           enableHtml: true,
-        }),
-        FormsModule,
-        BrowserAnimationsModule,
-        AppTestModule,
+        })
       ],
-      declarations: [HomeComponent],
+      imports: [
+        FormsModule,
+        CommonModule
+      ],
     }).compileComponents();
   });
 
@@ -123,9 +121,3 @@ describe('AppComponent', () => {
     expect(opened.toastRef.componentInstance).toBeDefined();
   }));
 });
-
-@NgModule({
-  imports: [CommonModule, ToastrModule],
-  declarations: [PinkToast, NotyfToast],
-})
-class AppTestModule {}

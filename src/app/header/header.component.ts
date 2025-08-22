@@ -1,7 +1,11 @@
 import { Component } from '@angular/core';
+import { GhButtonModule } from '@ctrl/ngx-github-buttons';
 
 @Component({
     selector: 'app-header',
+    imports: [
+      GhButtonModule
+    ],
     template: `
     <header class="header mt-5 text-center">
       <h1>Angular Toastr</h1>
@@ -9,6 +13,5 @@ import { Component } from '@angular/core';
       <gh-button user="scttcper" repo="ngx-toastr" [count]="true"></gh-button>
     </header>
   `,
-    standalone: false
 })
 export class HeaderComponent {}

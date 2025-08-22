@@ -1,4 +1,4 @@
-import { Directive, ElementRef } from '@angular/core';
+import { Directive, ElementRef, inject } from '@angular/core';
 
 @Directive({
   selector: '[toastContainer]',
@@ -6,7 +6,7 @@ import { Directive, ElementRef } from '@angular/core';
   standalone: true
 })
 export class ToastContainerDirective {
-  constructor(private el: ElementRef) { }
+  private readonly el: ElementRef = inject(ElementRef);
   getContainerElement(): HTMLElement {
     return this.el.nativeElement;
   }

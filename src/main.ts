@@ -1,13 +1,36 @@
-import { enableProdMode } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-
-import { AppModule } from './app/app.module';
+import { enableProdMode, provideZonelessChangeDetection } from '@angular/core';
 import { environment } from './environments/environment';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { AppComponent } from './app/app.component';
+import { provideToastr, provideToastrNoAnimation } from './lib/public_api';
 
 if (environment.production) {
   enableProdMode();
 }
 
-platformBrowserDynamic()
-  .bootstrapModule(AppModule)
+/*
+    AppComponent,
+    PinkToast,
+    BootstrapToast,
+    NotyfToast,
+    FooterComponent,
+    HeaderComponent,
+    HomeComponent,
+  ],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    BrowserAnimationsModule,
+    ToastContainerDirective,
+    GhButtonModule,
+  ],
+*/
+
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideToastr(),
+    provideZonelessChangeDetection(),
+    provideToastrNoAnimation(),
+  ]
+})
   .catch(err => console.log(err));
