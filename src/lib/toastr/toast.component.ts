@@ -21,8 +21,8 @@ import { IndividualConfig, ToastPackage } from './toastr-config';
 import { ToastrService } from './toastr.service';
 
 @Component({
-  selector: '[toast-component]',
-  template: `
+    selector: '[toast-component]',
+    template: `
   <button *ngIf="options.closeButton" (click)="remove()" type="button" class="toast-close-button" aria-label="Close">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -40,19 +40,18 @@ import { ToastrService } from './toastr.service';
     <div class="toast-progress" [style.width]="width() + '%'"></div>
   </div>
   `,
-  animations: [
-    trigger('flyInOut', [
-      state('inactive', style({ opacity: 0 })),
-      state('active', style({ opacity: 1 })),
-      state('removed', style({ opacity: 0 })),
-      transition('inactive => active', animate('{{ easeTime }}ms {{ easing }}')),
-      transition('active => removed', animate('{{ easeTime }}ms {{ easing }}')),
-    ]),
-  ],
-  preserveWhitespaces: false,
-  standalone: true,
-  imports: [NgIf],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    animations: [
+        trigger('flyInOut', [
+            state('inactive', style({ opacity: 0 })),
+            state('active', style({ opacity: 1 })),
+            state('removed', style({ opacity: 0 })),
+            transition('inactive => active', animate('{{ easeTime }}ms {{ easing }}')),
+            transition('active => removed', animate('{{ easeTime }}ms {{ easing }}')),
+        ]),
+    ],
+    preserveWhitespaces: false,
+    imports: [NgIf],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Toast<ConfigPayload = any> implements OnDestroy {
   message?: string | null;

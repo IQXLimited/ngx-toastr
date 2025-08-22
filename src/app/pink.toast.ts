@@ -11,8 +11,8 @@ import { Component } from '@angular/core';
 import { Toast, ToastrService, ToastPackage } from '../lib/public_api';
 
 @Component({
-  selector: '[pink-toast-component]',
-  styles: [`
+    selector: '[pink-toast-component]',
+    styles: [`
     :host {
       background-color: #FF69B4;
       position: relative;
@@ -30,7 +30,7 @@ import { Toast, ToastrService, ToastPackage } from '../lib/public_api';
       -webkit-transform: translateZ(0);
     }
   `],
-  template: `
+    template: `
   <div class="row" [style.display]="state().value === 'inactive' ? 'none' : ''">
     <div class="col-9">
       <div *ngIf="title" [class]="options.titleClass" [attr.aria-label]="title">
@@ -57,41 +57,42 @@ import { Toast, ToastrService, ToastPackage } from '../lib/public_api';
     <div class="toast-progress" [style.width]="width() + '%'"></div>
   </div>
   `,
-  animations: [
-    trigger('flyInOut', [
-      state('inactive', style({
-        opacity: 0,
-      })),
-      transition('inactive => active', animate('400ms ease-out', keyframes([
-        style({
-          transform: 'translate3d(100%, 0, 0) skewX(-30deg)',
-          opacity: 0,
-        }),
-        style({
-          transform: 'skewX(20deg)',
-          opacity: 1,
-        }),
-        style({
-          transform: 'skewX(-5deg)',
-          opacity: 1,
-        }),
-        style({
-          transform: 'none',
-          opacity: 1,
-        }),
-      ]))),
-      transition('active => removed', animate('400ms ease-out', keyframes([
-        style({
-          opacity: 1,
-        }),
-        style({
-          transform: 'translate3d(100%, 0, 0) skewX(30deg)',
-          opacity: 0,
-        }),
-      ]))),
-    ]),
-  ],
-  preserveWhitespaces: false,
+    animations: [
+        trigger('flyInOut', [
+            state('inactive', style({
+                opacity: 0,
+            })),
+            transition('inactive => active', animate('400ms ease-out', keyframes([
+                style({
+                    transform: 'translate3d(100%, 0, 0) skewX(-30deg)',
+                    opacity: 0,
+                }),
+                style({
+                    transform: 'skewX(20deg)',
+                    opacity: 1,
+                }),
+                style({
+                    transform: 'skewX(-5deg)',
+                    opacity: 1,
+                }),
+                style({
+                    transform: 'none',
+                    opacity: 1,
+                }),
+            ]))),
+            transition('active => removed', animate('400ms ease-out', keyframes([
+                style({
+                    opacity: 1,
+                }),
+                style({
+                    transform: 'translate3d(100%, 0, 0) skewX(30deg)',
+                    opacity: 0,
+                }),
+            ]))),
+        ]),
+    ],
+    preserveWhitespaces: false,
+    standalone: false
 })
 export class PinkToast extends Toast {
   // used for demo purposes

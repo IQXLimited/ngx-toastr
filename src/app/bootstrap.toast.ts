@@ -3,8 +3,8 @@ import { Component } from '@angular/core';
 import { Toast, ToastrService, ToastPackage } from '../lib/public_api';
 
 @Component({
-  selector: '[bootstrap-toast-component]',
-  template: `
+    selector: '[bootstrap-toast-component]',
+    template: `
     <div class="toast" role="alert" [style.display]="state().value === 'inactive' ? 'none' : ''">
       <div class="toast-header">
         <strong class="me-auto">{{ title || 'default header' }}</strong>
@@ -31,7 +31,8 @@ import { Toast, ToastrService, ToastPackage } from '../lib/public_api';
       </div>
     </div>
   `,
-  preserveWhitespaces: false,
+    preserveWhitespaces: false,
+    standalone: false
 })
 export class BootstrapToast extends Toast {
   // used for demo purposes

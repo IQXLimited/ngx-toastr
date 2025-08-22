@@ -21,8 +21,8 @@ import {
 import { ToastrService } from './toastr.service';
 
 @Component({
-  selector: '[toast-component]',
-  template: `
+    selector: '[toast-component]',
+    template: `
   <button *ngIf="options.closeButton" (click)="remove()" type="button" class="toast-close-button" aria-label="Close">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -40,9 +40,8 @@ import { ToastrService } from './toastr.service';
     <div class="toast-progress" [style.width]="width() + '%'"></div>
   </div>
   `,
-  standalone: true,
-  imports: [NgIf],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [NgIf],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ToastNoAnimation implements OnDestroy {
   message?: string | null;

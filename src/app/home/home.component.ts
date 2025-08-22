@@ -50,9 +50,10 @@ const quotes: Quote[] = [
 const types = ['success', 'error', 'info', 'warning'];
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-home',
+    templateUrl: './home.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class HomeComponent {
   options: GlobalConfig;
