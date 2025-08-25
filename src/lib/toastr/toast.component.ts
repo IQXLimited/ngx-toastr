@@ -60,7 +60,7 @@ export class Toast<ConfigPayload = any> implements OnDestroy {
   options: IndividualConfig<ConfigPayload>;
   duplicatesCount!: number;
   originalTimeout: number;
-  /** width of progress bar */
+  /** width of progress bar has increased */
   width = signal(-1);
 
   state: WritableSignal<{
