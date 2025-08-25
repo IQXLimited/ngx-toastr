@@ -185,7 +185,7 @@ jobs:
           fetch-depth: 2
 
       - name: Setup Node
-        if: github.event_name == 'workflow_dispatch' || steps.check-lib-changes.outputs.lib-changed == 'true'
+        if: github.event_name == 'workflow_dispatch'
         uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -193,7 +193,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Cache node_modules
-        if: github.event_name == 'workflow_dispatch' || steps.check-lib-changes.outputs.lib-changed == 'true'
+        if: github.event_name == 'workflow_dispatch'
         uses: actions/cache@v4
         with:
           path: node_modules
@@ -202,11 +202,11 @@ jobs:
             ${{ runner.os }}-node-modules-
 
       - name: Install dependencies
-        if: github.event_name == 'workflow_dispatch' || steps.check-lib-changes.outputs.lib-changed == 'true'
+        if: github.event_name == 'workflow_dispatch'
         run: PUPPETEER_SKIP_DOWNLOAD=true npm ci
 
       - name: Restore build artifacts
-        if: github.event_name == 'workflow_dispatch' || steps.check-lib-changes.outputs.lib-changed == 'true'
+        if: github.event_name == 'workflow_dispatch'
         uses: actions/cache@v4
         with:
           path: |
@@ -217,13 +217,13 @@ jobs:
             ${{ runner.os }}-build-artifacts-
 
       - name: Configure Git
-        if: github.event_name == 'workflow_dispatch' || steps.check-lib-changes.outputs.lib-changed == 'true'
+        if: github.event_name == 'workflow_dispatch'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Determine version type from PR title
-        if: github.event_name == 'workflow_dispatch' || steps.check-lib-changes.outputs.lib-changed == 'true'
+        if: github.event_name == 'workflow_dispatch'
         id: version_type
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
@@ -251,7 +251,7 @@ jobs:
           echo "Selected version type: $VERSION_TYPE"
 
       - name: Increment version
-        if: github.event_name == 'workflow_dispatch' || steps.check-lib-changes.outputs.lib-changed == 'true'
+        if: github.event_name == 'workflow_dispatch'
         id: version
         run: |
           VERSION_TYPE="${{ steps.version_type.outputs.version_type }}"
@@ -270,7 +270,7 @@ jobs:
           echo "New version: $NEW_VERSION (incremented as $VERSION_TYPE)"
 
       - name: Build package
-        if: github.event_name == 'workflow_dispatch' || steps.check-lib-changes.outputs.lib-changed == 'true'
+        if: github.event_name == 'workflow_dispatch'
         run: |
           # Only build if dist directory doesn't exist or is empty
           if [ ! -d "dist" ] || [ -z "$(ls -A dist 2>/dev/null)" ]; then
@@ -281,13 +281,13 @@ jobs:
           fi
 
       - name: Publish to NPM
-        if: github.event_name == 'workflow_dispatch' || steps.check-lib-changes.outputs.lib-changed == 'true'
+        if: github.event_name == 'workflow_dispatch'
         run: npm publish ./dist --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Commit version change
-        if: github.event_name == 'workflow_dispatch' || steps.check-lib-changes.outputs.lib-changed == 'true'
+        if: github.event_name == 'workflow_dispatch'
         run: |
           git add package.json package-lock.json src/lib/package.json
           git commit -m "chore: bump version to v${{ steps.version.outputs.new_version }}"
