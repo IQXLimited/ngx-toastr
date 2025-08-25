@@ -90,7 +90,7 @@ npm install @iqx-limited/ngx-toastr --save
 
 ```typescript
 import { AppComponent } from './src/app.component';
-import { provideToastr } from 'ngx-toastr';
+import { provideToastr } from '@iqx-limited/ngx-toastr';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -102,7 +102,7 @@ bootstrapApplication(AppComponent, {
 ## Use
 
 ```typescript
-import { ToastrService } from 'ngx-toastr';
+import { ToastrService } from '@iqx-limited/ngx-toastr';
 
 @Component({...})
 export class YourComponent {
@@ -187,7 +187,7 @@ Pass values to `provideToastr()` to set global options.
 ```typescript
 import { AppComponent } from './src/app.component';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideToastr } from 'ngx-toastr';
+import { provideToastr } from '@iqx-limited/ngx-toastr';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -238,7 +238,7 @@ Add a div with `toastContainer` directive on it.
 ```typescript
 import { Component, OnInit, ViewChild } from '@angular/core';
 
-import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective, ToastrService } from '@iqx-limited/ngx-toastr';
 
 @Component({
   selector: 'app-root',
@@ -299,7 +299,7 @@ Create your toast component extending Toast see the demo's pink toast for an exa
 https://github.com/IQXLimited/ngx-toastr/blob/master/src/app/pink.toast.ts
 
 ```typescript
-import { ToastrModule } from 'ngx-toastr';
+import { ToastrModule } from '@iqx-limited/ngx-toastr';
 
 @NgModule({
   imports: [
