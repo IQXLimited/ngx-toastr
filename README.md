@@ -23,8 +23,7 @@ DEMO: https://iqxlimited.github.io/ngx-toastr/
 - AoT compilation and lazy loading compatible
 - Component inheritance for custom toasts
 - SystemJS/UMD rollup bundle
-- Animations using Angular's
-  [Web Animations API](https://angular.io/docs/ts/latest/guide/animations.html)
+- Animations using Pure CSS Animations
 - Output toasts to an optional target directive
 
 ## Dependencies
@@ -86,25 +85,6 @@ npm install @iqx-limited/ngx-toastr --save
 ```
 
 **step 2:** add `provideToastr`, or `provideToastrNoAnimation`, to providers.
-
-- Module based
-
-```typescript
-import { CommonModule } from '@angular/common';
-import { provideToastr } from 'ngx-toastr';
-
-@NgModule({
-  imports: [
-    CommonModule
-  ],
-  providers: [
-    provideToastr()
-  ],
-  bootstrap: [App],
-  declarations: [App],
-})
-class MainModule {}
-```
 
 - Standalone
 
@@ -249,30 +229,9 @@ export interface ActiveToast {
 ### Put toasts in your own container
 
 Put toasts in a specific div inside your application. This should probably be
-somewhere that doesn't get deleted. Add `ToastContainerModule` to the ngModule
-where you need the directive available. Make sure that your container has
+somewhere that doesn't get deleted. Make sure that your container has
 an `aria-live="polite"` attribute, so that any time a toast is injected into
 the container it is announced by screen readers.
-
-```typescript
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { provideToastr } from 'ngx-toastr';
-import { AppComponent } from './app.component';
-
-@NgModule({
-  declarations: [AppComponent],
-  imports: [
-    BrowserModule,
-    ToastContainerModule,
-  ],
-  providers: [
-    provideToastr({ positionClass: 'inline' }),
-  ],
-  bootstrap: [AppComponent],
-})
-export class AppModule {}
-```
 
 Add a div with `toastContainer` directive on it.
 
@@ -392,17 +351,6 @@ ngOnInit() {
     ```
     See: https://github.com/scttcper/ngx-toastr/issues/594.
 
-## Previous Works
-
-[toastr](https://github.com/CodeSeven/toastr) original toastr\
-[angular-toastr](https://github.com/Foxandxss/angular-toastr) AngularJS toastr\
-[notyf](https://github.com/caroso1222/notyf) notyf (css)
-
 ## License
 
 MIT
-
----
-
-> GitHub [@scttcper](https://github.com/scttcper) &nbsp;&middot;&nbsp;
-> Twitter [@scttcper](https://twitter.com/scttcper)
