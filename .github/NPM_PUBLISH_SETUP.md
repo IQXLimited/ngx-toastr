@@ -26,7 +26,20 @@ You need to set up an NPM token secret in your repository:
 ### Triggering the Workflow
 
 The workflow runs automatically when:
-- Code is pushed to the `master` branch (uses patch increment by default)
+- Code is pushed to the `master` branch (analyzes PR title to determine version type)
+
+**Automatic Version Detection from PR Titles:**
+The workflow automatically detects the version increment type from your PR title:
+
+- **Major**: Include `[major]`, `major:`, or `BREAKING` in the PR title
+- **Minor**: Include `[minor]`, `minor:`, or `feat:` in the PR title  
+- **Patch**: Default for all other PR titles
+
+Examples:
+- `"Fix button styling issue"` → patch version (1.0.0 → 1.0.1)
+- `"feat: Add new notification types"` → minor version (1.0.0 → 1.1.0)
+- `"[major] Restructure API endpoints"` → major version (1.0.0 → 2.0.0)
+- `"BREAKING: Remove deprecated methods"` → major version (1.0.0 → 2.0.0)
 
 You can also trigger it manually:
 - Go to Actions tab in your repository

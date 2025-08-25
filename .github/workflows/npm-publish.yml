@@ -43,10 +43,37 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
+      - name: Determine version type from PR title
+        id: version_type
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            # Use the manually selected version type
+            VERSION_TYPE="${{ github.event.inputs.version_type }}"
+          else
+            # Get the most recent merge commit message (which contains PR title)
+            PR_TITLE=$(git log --oneline -1 --pretty=format:"%s")
+            echo "PR Title: $PR_TITLE"
+            
+            # Check for version indicators in PR title (case insensitive)
+            if echo "$PR_TITLE" | grep -iE '\[major\]|major:|BREAKING' > /dev/null; then
+              VERSION_TYPE="major"
+              echo "Detected MAJOR version from PR title"
+            elif echo "$PR_TITLE" | grep -iE '\[minor\]|minor:|feat:' > /dev/null; then
+              VERSION_TYPE="minor" 
+              echo "Detected MINOR version from PR title"
+            else
+              VERSION_TYPE="patch"
+              echo "Using default PATCH version"
+            fi
+          fi
+          
+          echo "version_type=$VERSION_TYPE" >> $GITHUB_OUTPUT
+          echo "Selected version type: $VERSION_TYPE"
+
       - name: Increment version
         id: version
         run: |
-          VERSION_TYPE="${{ github.event.inputs.version_type || 'patch' }}"
+          VERSION_TYPE="${{ steps.version_type.outputs.version_type }}"
           npm version $VERSION_TYPE --no-git-tag-version
           NEW_VERSION=$(node -p "require('./package.json').version")
           
@@ -59,7 +86,7 @@ jobs:
           "
           
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
-          echo "New version: $NEW_VERSION"
+          echo "New version: $NEW_VERSION (incremented as $VERSION_TYPE)"
 
       - name: Build package
         run: npm run build
