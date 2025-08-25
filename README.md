@@ -313,44 +313,6 @@ import { ToastrModule } from 'ngx-toastr';
 class AppModule {}
 ```
 
-## FAQ
-
-1.  ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it
-    was checked\
-    When opening a toast inside an angular lifecycle wrap it in setTimeout
-
-```typescript
-ngOnInit() {
-    setTimeout(() => this.toastr.success('sup'))
-}
-```
-
-2.  Change default icons (check, warning sign, etc)\
-    Overwrite the css background-image: https://github.com/IQXLimited/ngx-toastr/blob/master/src/lib/toastr.css.
-3.  How do I use this in an ErrorHandler?\
-    See: https://github.com/scttcper/ngx-toastr/issues/179.
-4.  How can I translate messages?\
-    See: https://github.com/scttcper/ngx-toastr/issues/201.
-5.  How to handle toastr click/tap action?
-    ```ts
-    showToaster() {
-      this.toastr.success('Hello world!', 'Toastr fun!')
-        .onTap
-        .pipe(take(1))
-        .subscribe(() => this.toasterClickedHandler());
-    }
-
-    toasterClickedHandler() {
-      console.log('Toastr clicked');
-    }
-    ```
-6. How to customize styling without overridding defaults?\
-    Add multiple CSS classes separated by a space:
-    ```ts
-    toastClass: 'yourclass ngx-toastr'
-    ```
-    See: https://github.com/scttcper/ngx-toastr/issues/594.
-
 ## License
 
 MIT
