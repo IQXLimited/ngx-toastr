@@ -1,8 +1,8 @@
 import { Component, VERSION } from '@angular/core';
 
 @Component({
-  selector: 'app-footer',
-  template: `
+    selector: 'app-footer',
+    template: `
   <footer class="footer mb-4 mt-5">
     Angular {{ version }}
     <br>
@@ -11,8 +11,8 @@ import { Component, VERSION } from '@angular/core';
     <a href="https://github.com/scttcper/ngx-toastr">Source</a>
   </footer>
   `,
-  styles: [
-    `
+    styles: [
+        `
       .footer {
         line-height: 2;
         text-align: center;
@@ -21,7 +21,7 @@ import { Component, VERSION } from '@angular/core';
         color: #999;
       }
     `,
-  ],
+    ],
 })
 export class FooterComponent {
   version = VERSION.full;

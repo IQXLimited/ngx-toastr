@@ -5,6 +5,7 @@ import {
   ViewChildren,
   VERSION,
   ChangeDetectionStrategy,
+  inject,
 } from '@angular/core';
 import { cloneDeep, random } from 'lodash-es';
 
@@ -18,6 +19,7 @@ import {
 import { NotyfToast } from '../notyf.toast';
 import { PinkToast } from '../pink.toast';
 import { BootstrapToast } from '../bootstrap.toast';
+import { FormsModule } from '@angular/forms';
 
 interface Quote {
   title?: string;
@@ -52,6 +54,9 @@ const types = ['success', 'error', 'info', 'warning'];
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
+  imports: [
+    FormsModule
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent {
@@ -66,8 +71,10 @@ export class HomeComponent {
   inlinePositionIndex = 0;
   @ViewChildren(ToastContainerDirective) inlineContainers!: QueryList<ToastContainerDirective>;
 
+  public readonly toastr: ToastrService = inject(ToastrService);
+  private readonly renderer: Renderer2 = inject(Renderer2);
 
-  constructor(public toastr: ToastrService, private renderer: Renderer2) {
+  constructor() {
     this.options = this.toastr.toastrConfig;
   }
   getMessage() {

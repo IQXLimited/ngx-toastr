@@ -1,0 +1,64 @@
+:host {
+  background-color: #FF69B4;
+  position: relative;
+  overflow: hidden;
+  margin: 0 0 6px;
+  padding: 10px;
+  width: 300px;
+  border-radius: 3px;
+  color: #FFFFFF;
+  pointer-events: all;
+  cursor: pointer;
+}
+
+.btn-pink {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+/* Keyframes for entering */
+@keyframes flyInPink {
+  0% {
+    transform: translate3d(100%, 0, 0) skewX(-30deg);
+    opacity: 0;
+  }
+  25% {
+    transform: skewX(20deg);
+    opacity: 1;
+  }
+  50% {
+    transform: skewX(-5deg);
+    opacity: 1;
+  }
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* Keyframes for leaving */
+@keyframes flyOutPink {
+  0% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(100%, 0, 0) skewX(30deg);
+  }
+}
+
+/* States */
+.inactive {
+  opacity: 0;
+}
+
+.active {
+  animation: flyInPink 400ms ease-out forwards;
+}
+
+.removed {
+  animation: flyOutPink 400ms ease-out forwards;
+}

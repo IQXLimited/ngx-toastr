@@ -1,3 +1,7 @@
+> **Note:** This repository is a fork of [ngx-toastr](https://github.com/scttcper/ngx-toastr). It builds upon the original project to provide additional features, fixes, or customizations.
+
+-------------------------------------------------------------------------------
+
 <div align="center">
   <img src="https://raw.githubusercontent.com/scttcper/ngx-toastr/master/misc/documentation-assets/ngx-toastr-example.png" width="300" alt="Angular Toastr">
   <br>
@@ -18,7 +22,7 @@ DEMO: https://ngx-toastr.vercel.app
 ## Features
 
 - Toast Component Injection without being passed `ViewContainerRef`
-- No use of `*ngFor`. Fewer dirty checks and higher performance.
+- No use of `@for`. Fewer dirty checks and higher performance.
 - AoT compilation and lazy loading compatible
 - Component inheritance for custom toasts
 - SystemJS/UMD rollup bundle
@@ -37,22 +41,15 @@ Latest version available for each version of Angular
 | 15.2.2     | 14.x.       |
 | 16.2.0     | 15.x        |
 | 17.0.2     | 16.x        |
-| current    | >= 17.x     |
+| 18.0.0     | 17.x        |
+| 19.0.0     | 18.x        |
+| current    | 20.x        |
 
 ## Install
 
 ```bash
 npm install ngx-toastr --save
 ```
-
-`@angular/animations` package is a required dependency for the default toast
-
-```bash
-npm install @angular/animations --save
-```
-
-Don't want to use `@angular/animations`? See
-[Setup Without Animations](#setup-without-animations).
 
 ## Setup
 
@@ -91,21 +88,20 @@ Don't want to use `@angular/animations`? See
 ]
 ```
 
-**step 2:** add `ToastrModule` to app `NgModule`, or `provideToastr` to providers, make sure you have `BrowserAnimationsModule` (or `provideAnimations`) as well.
+**step 2:** add `provideToastr`, or `provideToastrNoAnimation`, to providers.
 
 - Module based
 
 ```typescript
 import { CommonModule } from '@angular/common';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
-import { ToastrModule } from 'ngx-toastr';
+import { provideToastr } from 'ngx-toastr';
 
 @NgModule({
   imports: [
-    CommonModule,
-    BrowserAnimationsModule, // required animations module
-    ToastrModule.forRoot(), // ToastrModule added
+    CommonModule
+  ],
+  providers: [
+    provideToastr()
   ],
   bootstrap: [App],
   declarations: [App],
@@ -117,13 +113,10 @@ class MainModule {}
 
 ```typescript
 import { AppComponent } from './src/app.component';
-import { provideAnimations } from '@angular/platform-browser/animations';
-
 import { provideToastr } from 'ngx-toastr';
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideAnimations(), // required animations providers
     provideToastr(), // Toastr providers
   ]
 });
@@ -152,7 +145,7 @@ There are **individual options** and **global options**.
 
 Passed to `ToastrService.success/error/warning/info/show()`
 
-| Option            | Type                           | Default                        | Description                                                                             
+| Option            | Type                           | Default                        | Description
 | ----------------- | ------------------------------ | ------------------------------ | ------------------------------------------------- |
 | toastComponent    | Component                      | Toast                          | Angular component that will be used               |
 | closeButton       | boolean                        | false                          | Show close button                                 |
@@ -212,27 +205,11 @@ iconClasses = {
 
 #### Setting Global Options
 
-Pass values to `ToastrModule.forRoot()` or `provideToastr()` to set global options.
-
-- Module based
-
-```typescript
-// root app NgModule
-imports: [
-  ToastrModule.forRoot({
-    timeOut: 10000,
-    positionClass: 'toast-bottom-right',
-    preventDuplicates: true,
-  }),
-],
-```
-
-- Standalone
+Pass values to `provideToastr()` to set global options.
 
 ```typescript
 import { AppComponent } from './src/app.component';
 import { provideAnimations } from '@angular/platform-browser/animations';
-
 import { provideToastr } from 'ngx-toastr';
 
 bootstrapApplication(AppComponent, {
@@ -241,7 +218,7 @@ bootstrapApplication(AppComponent, {
       timeOut: 10000,
       positionClass: 'toast-bottom-right',
       preventDuplicates: true,
-    }), 
+    }),
   ]
 });
 ```
@@ -283,22 +260,18 @@ the container it is announced by screen readers.
 ```typescript
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
-import { ToastrModule, ToastContainerModule } from 'ngx-toastr';
-
+import { provideToastr } from 'ngx-toastr';
 import { AppComponent } from './app.component';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
     BrowserModule,
-    BrowserAnimationsModule,
-
-    ToastrModule.forRoot({ positionClass: 'inline' }),
     ToastContainerModule,
   ],
-  providers: [],
+  providers: [
+    provideToastr({ positionClass: 'inline' }),
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
@@ -363,31 +336,6 @@ map: {
   'ngx-toastr': 'node_modules/ngx-toastr/bundles/ngx-toastr.umd.min.js',
 }
 ```
-
-## Setup Without Animations
-
-If you do not want to include `@angular/animations` in your project you can
-override the default toast component in the global config to use
-`ToastNoAnimation` instead of the default one.
-
-In your main module (ex: `app.module.ts`)
-
-```typescript
-import { ToastrModule, ToastNoAnimation, ToastNoAnimationModule } from 'ngx-toastr';
-
-@NgModule({
-  imports: [
-    // ...
-
-    // BrowserAnimationsModule no longer required
-    ToastNoAnimationModule.forRoot(),
-  ],
-  // ...
-})
-class AppModule {}
-```
-
-That's it! Animations are no longer required.
 
 ## Using A Custom Toast
 
