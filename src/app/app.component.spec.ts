@@ -1,33 +1,44 @@
-import { CommonModule } from '@angular/common';
-import { TestBed, waitForAsync } from '@angular/core/testing';
-import { FormsModule } from '@angular/forms';
-import { GhButtonModule } from '@ctrl/ngx-github-buttons';
+import { CommonModule } from "@angular/common"
+import { ComponentFixture, TestBed } from "@angular/core/testing"
+import { FormsModule } from "@angular/forms"
+import { GhButtonModule } from "@ctrl/ngx-github-buttons"
+import { AppComponent } from "./app.component"
+import { provideToastr } from "../lib/public_api"
+import { provideZonelessChangeDetection } from "@angular/core"
 
-import { AppComponent } from './app.component';
-import { provideToastr } from '../lib/public_api';
+describe ( "AppComponent", ( ) => {
+  let component: AppComponent
+  let fixture: ComponentFixture<AppComponent>
 
-describe('AppComponent', () => {
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      providers: [
-        provideToastr({
-          timeOut: 800,
-          progressBar: true,
-          onActivateTick: true,
-          enableHtml: true,
-        })
-      ],
+  beforeEach ( async ( ) => {
+    await TestBed.configureTestingModule ( {
+      teardown: {
+        destroyAfterEach: true
+      },
       imports: [
         FormsModule,
         CommonModule,
         GhButtonModule,
       ],
-    }).compileComponents();
-  }));
+      providers: [
+        provideZonelessChangeDetection ( ),
+        provideToastr ( {
+          timeOut: 800,
+          progressBar: true,
+          enableHtml: true,
+        } )
+      ]
+    } ).compileComponents ( )
+  } )
 
-  it('should create the app', waitForAsync(() => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app).toBeTruthy();
-  }));
-});
+  beforeEach ( ( ) => {
+    fixture = TestBed.createComponent ( AppComponent )
+    component = fixture.componentInstance
+    fixture.detectChanges ( )
+    fixture.isStable ( )
+  } )
+
+  it ( "should create", ( ) => {
+    expect ( component ).toBeTruthy ( )
+  } )
+} )

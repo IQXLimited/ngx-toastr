@@ -1,28 +1,37 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { GhButtonModule } from '@ctrl/ngx-github-buttons';
 
 import { HeaderComponent } from './header.component';
+import { provideZonelessChangeDetection } from '@angular/core';
 
-describe('HeaderComponent', () => {
-  let component: HeaderComponent;
-  let fixture: ComponentFixture<HeaderComponent>;
+describe ( "HeaderComponent", ( ) => {
+  let component: HeaderComponent
+  let fixture: ComponentFixture<HeaderComponent>
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      imports: [
-        GhButtonModule
+  beforeEach ( async ( ) => {
+    await TestBed.configureTestingModule ( {
+      teardown: {
+        destroyAfterEach: true
+      },
+      providers: [
+        provideZonelessChangeDetection ( ),
       ],
-    }).compileComponents();
-  }));
+      imports: [
+        GhButtonModule,
+      ]
+    } ).compileComponents ( )
+  } )
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(HeaderComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+  beforeEach ( ( ) => {
+    fixture = TestBed.createComponent ( HeaderComponent )
+    component = fixture.componentInstance
+    fixture.detectChanges ( )
+    fixture.isStable ( )
+  } )
 
-  it('should be created', () => {
-    expect(component).toBeTruthy();
-  });
-});
+
+  it ( "should create", ( ) => {
+    expect ( component ).toBeTruthy ( )
+  } )
+} )
