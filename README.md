@@ -337,7 +337,7 @@ map: {
 ## Using A Custom Toast
 
 Create your toast component extending Toast see the demo's pink toast for an example
-https://github.com/scttcper/ngx-toastr/blob/master/src/app/pink.toast.ts
+https://github.com/IQXLimited/ngx-toastr/blob/master/src/app/pink.toast.ts
 
 ```typescript
 import { ToastrModule } from 'ngx-toastr';
@@ -367,7 +367,7 @@ ngOnInit() {
 ```
 
 2.  Change default icons (check, warning sign, etc)\
-    Overwrite the css background-image: https://github.com/scttcper/ngx-toastr/blob/master/src/lib/toastr.css.
+    Overwrite the css background-image: https://github.com/IQXLimited/ngx-toastr/blob/master/src/lib/toastr.css.
 3.  How do I use this in an ErrorHandler?\
     See: https://github.com/scttcper/ngx-toastr/issues/179.
 4.  How can I translate messages?\
