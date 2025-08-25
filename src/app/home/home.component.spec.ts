@@ -34,11 +34,11 @@ describe ( "HomeComponent", ( ) => {
     } ).compileComponents ( )
   } )
 
-  beforeEach ( ( ) => {
+  beforeEach ( async ( ) => {
     fixture = TestBed.createComponent ( HomeComponent )
     component = fixture.componentInstance
     fixture.detectChanges ( )
-    fixture.isStable ( )
+    await fixture.isStable ( )
   } )
 
   it ( "should create", ( ) => {
