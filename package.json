@@ -7,11 +7,11 @@
   },
   "version": "1.0.0",
   "license": "MIT",
-  "author": "IQX",
+  "author": "IQX Limited",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "demo:build": "ng build --configuration production --no-progress",
+    "demo:build": "ng build --configuration production --no-progress --base-href 'https://iqxlimited.github.io/ngx-toastr/'",
     "build": "ng-packagr -p src/lib/ng-package.json",
     "postbuild": "cpy README.md LICENSE dist",
     "test": "ng test --watch=false",
