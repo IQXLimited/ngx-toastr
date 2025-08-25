@@ -23,11 +23,11 @@ describe ( "FooterComponent", ( ) => {
     } ).compileComponents ( )
   } )
 
-  beforeEach ( ( ) => {
+  beforeEach ( async ( ) => {
     fixture = TestBed.createComponent ( FooterComponent )
     component = fixture.componentInstance
     fixture.detectChanges ( )
-    fixture.isStable ( )
+    await fixture.isStable ( )
   } )
 
   it ( "should create", ( ) => {
