@@ -1,4 +1,4 @@
-import { ComponentRef, inject, Inject, Injectable, Injector, NgZone, SecurityContext } from '@angular/core';
+import { ComponentRef, inject, Injectable, Injector, SecurityContext } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { Observable } from 'rxjs';
@@ -48,7 +48,6 @@ export class ToastrService {
   public readonly token: ToastToken = inject(TOAST_CONFIG);
   private readonly overlay: Overlay = inject(Overlay);
   private readonly sanitizer: DomSanitizer = inject(DomSanitizer);
-  private readonly ngZone: NgZone = inject(NgZone);
   private readonly _injector: Injector = inject(Injector);
 
   constructor() {
@@ -170,9 +169,6 @@ export class ToastrService {
     title: string | undefined,
     config: GlobalConfig,
   ): ActiveToast<any> | null {
-    if (config.onActivateTick) {
-      return this.ngZone.run(() => this._buildNotification(toastType, message, title, config));
-    }
     return this._buildNotification(toastType, message, title, config);
   }
 

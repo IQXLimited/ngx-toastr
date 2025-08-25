@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, inject, makeEnvironmentProviders, signal } from '@angular/core';
+import { ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import {
   ApplicationRef,
   Component,
-  HostBinding,
   HostListener,
   OnDestroy,
 } from '@angular/core';
@@ -13,49 +12,52 @@ import {
   DefaultNoComponentGlobalConfig,
   GlobalConfig,
   IndividualConfig,
-  ToastPackage,
-  TOAST_CONFIG,
+  ToastPackage
 } from './toastr-config';
 import { ToastrService } from './toastr.service';
 
 @Component({
     selector: '[toast-component]',
     template: `
-  @if (options.closeButton) {
-    <button (click)="remove()" type="button" class="toast-close-button" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  }
-  @if (title) {
-    <div [class]="options.titleClass" [attr.aria-label]="title">
-      <span>
-        {{ title }} 
-        @if (duplicatesCount) {
-          <ng-container>
-            [{{ duplicatesCount + 1 }}]
-          </ng-container>
+      @if (options.closeButton) {
+        <button (click)="remove()" type="button" class="toast-close-button" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      }
+      @if (title) {
+        <div [class]="options.titleClass" [attr.aria-label]="title">
+          <span>
+            {{ title }} 
+            @if (duplicatesCount) {
+              <ng-container>
+                [{{ duplicatesCount + 1 }}]
+              </ng-container>
+            }
+          </span>
+        </div>
+      }
+      @if (options.enableHtml) {
+        @if (message) {
+          <div role="alert"
+            [class]="options.messageClass" [innerHTML]="message">
+          </div>
+        } @else {
+          <div role="alert"
+            [class]="options.messageClass" [attr.aria-label]="message">
+            {{ message }}
+          </div>
         }
-      </span>
-    </div>
-  }
-  @if (options.enableHtml) {
-    @if (message) {
-      <div role="alert"
-        [class]="options.messageClass" [innerHTML]="message">
-      </div>
-    } @else {
-      <div role="alert"
-        [class]="options.messageClass" [attr.aria-label]="message">
-        {{ message }}
-      </div>
-    }
-  }
-  @if (options.progressBar) {
-    <div>
-      <div class="toast-progress" [style.width]="width() + '%'"></div>
-    </div>
-  }
-  `,
+      }
+      @if (options.progressBar) {
+        <div>
+          <div class="toast-progress" [style.width]="width() + '%'"></div>
+        </div>
+      }
+    `,
+    host: {
+      '[class]': 'toastPackage.toastType + " " + toastPackage.config.toastClass',
+      '[style.display]': 'displayStyle',
+    },
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ToastNoAnimation implements OnDestroy {
@@ -66,18 +68,6 @@ export class ToastNoAnimation implements OnDestroy {
   originalTimeout: number;
   /** width of progress bar */
   width = signal(-1);
-  /** a combination of toast type and options.toastClass */
-  @HostBinding('class') toastClasses = '';
-
-  /** hides component when waiting to be displayed */
-  @HostBinding('style.display')
-  get displayStyle() {
-    if (this.state() === 'inactive') {
-      return 'none';
-    }
-
-    return null;
-  }
 
   /** controls animation */
   state = signal('inactive');
@@ -98,9 +88,6 @@ export class ToastNoAnimation implements OnDestroy {
     this.title = this.toastPackage.title;
     this.options = this.toastPackage.config;
     this.originalTimeout = this.toastPackage.config.timeOut;
-    this.toastClasses = `${this.toastPackage.toastType} ${
-      this.toastPackage.config.toastClass
-    }`;
     this.sub = this.toastPackage.toastRef.afterActivate().subscribe(() => {
       this.activateToast();
     });

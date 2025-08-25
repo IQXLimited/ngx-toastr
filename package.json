@@ -20,11 +20,10 @@
   "private": true,
   "devDependencies": {
     "@angular-devkit/build-angular": "20.2.0",
-    "@angular-eslint/builder": "20.1.1",
-    "@angular-eslint/eslint-plugin": "20.1.1",
-    "@angular-eslint/eslint-plugin-template": "20.1.1",
-    "@angular-eslint/template-parser": "20.1.1",
-    "@angular/animations": "20.2.1",
+    "@angular-eslint/builder": "20.2.0",
+    "@angular-eslint/eslint-plugin": "20.2.0",
+    "@angular-eslint/eslint-plugin-template": "20.2.0",
+    "@angular-eslint/template-parser": "20.2.0",
     "@angular/cli": "20.2.0",
     "@angular/common": "20.2.1",
     "@angular/compiler": "20.2.1",
@@ -43,7 +42,7 @@
     "@typescript-eslint/parser": "8.40.0",
     "bootstrap": "5.3.7",
     "cpy-cli": "6.0.0",
-    "eslint": "9.33.0",
+    "eslint": "9.34.0",
     "jasmine-core": "5.9.0",
     "jasmine-spec-reporter": "7.0.0",
     "karma": "6.4.4",
@@ -58,8 +57,7 @@
     "rxjs": "7.8.2",
     "ts-node": "10.9.2",
     "tslib": "^2.5.0",
-    "typescript": "5.9.2",
-    "zone.js": "0.15.1"
+    "typescript": "5.9.2"
   },
   "release": {
     "branches": [

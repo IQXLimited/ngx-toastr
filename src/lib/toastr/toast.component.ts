@@ -1,16 +1,7 @@
-// import {
-//   animate,
-//   state,
-//   style,
-//   transition,
-//   trigger
-// } from '@angular/animations';
 import {
   ChangeDetectionStrategy,
   Component,
-  HostBinding,
   HostListener,
-  NgZone,
   OnDestroy,
   WritableSignal,
   inject,
@@ -21,49 +12,45 @@ import { IndividualConfig, ToastPackage } from './toastr-config';
 import { ToastrService } from './toastr.service';
 
 @Component({
-    selector: '[toast-component]',
-    template: `
-      @if (options.closeButton) {
-        <button (click)="remove()" type="button" class="toast-close-button" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      }
-      @if (title) {
-        <div [class]="options.titleClass" [attr.aria-label]="title">
-          {{ title }} 
-          @if (duplicatesCount) {
-            <ng-container>
-              [{{ duplicatesCount + 1 }}]
-            </ng-container>
-          }
-        </div>
-      }
-      @if (options.enableHtml) {
-        @if (message) {
-          <div role="alert" [class]="options.messageClass" [innerHTML]="message">
-          </div>
-        } @else {
-          <div role="alert" [class]="options.messageClass" [attr.aria-label]="message">
-            {{ message }}
-          </div>
+  selector: '[toast-component]',
+  template: `
+    @if (options.closeButton) {
+      <button (click)="remove()" type="button" class="toast-close-button" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    }
+    @if (title) {
+      <div [class]="options.titleClass" [attr.aria-label]="title">
+        {{ title }}
+        @if (duplicatesCount) {
+          <ng-container>
+            [{{ duplicatesCount + 1 }}]
+          </ng-container>
         }
-      }
-      @if (options.progressBar) {
-        <div>
-          <div class="toast-progress" [style.width]="width() + '%'"></div>
+      </div>
+    }
+    @if (options.enableHtml) {
+      @if (message) {
+        <div role="alert" [class]="options.messageClass" [innerHTML]="message">
+        </div>
+      } @else {
+        <div role="alert" [class]="options.messageClass" [attr.aria-label]="message">
+          {{ message }}
         </div>
       }
-    `,
-    // animations: [
-    //     trigger('flyInOut', [
-    //         state('inactive', style({ opacity: 0 })),
-    //         state('active', style({ opacity: 1 })),
-    //         state('removed', style({ opacity: 0 })),
-    //         transition('inactive => active', animate('{{ easeTime }}ms {{ easing }}')),
-    //         transition('active => removed', animate('{{ easeTime }}ms {{ easing }}')),
-    //     ]),
-    // ],
+    }
+    @if (options.progressBar) {
+      <div>
+        <div class="toast-progress" [style.width]="width() + '%'"></div>
+      </div>
+    }
+  `,
   styleUrl: "./toast.component.scss",
+  host: {
+    '[class]': 'toastPackage.toastType + " " + toastPackage.config.toastClass',
+    '[class.active]': 'state().value === "active"',
+    '[class.removed]': 'state().value === "removed"',
+  },
   preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -75,35 +62,11 @@ export class Toast<ConfigPayload = any> implements OnDestroy {
   originalTimeout: number;
   /** width of progress bar */
   width = signal(-1);
-  /** a combination of toast type and options.toastClass */
-  @HostBinding('class') toastClasses = '';
-  @HostBinding('class.active') get isActive() {
-    return this.state().value === 'active'
-  }
-
-  @HostBinding('class.removed') get isRemoved() {
-    return this.state().value === 'removed'
-  }
 
   state: WritableSignal<{
     value: 'inactive' | 'active' | 'removed';
     params: { easeTime: number | string; easing: string };
   }>;
-
-  // /** controls animation */
-  // @HostBinding('@flyInOut') get _state() {
-  //   return this.state();
-  // }
-
-  // /** hides component when waiting to be displayed */
-  // @HostBinding('style.display')
-  // get displayStyle(): string | undefined {
-  //   if (this.state().value === 'inactive') {
-  //     return 'none';
-  //   }
-
-  //   return;
-  // }
 
   private timeout: any;
   private intervalId: any;
@@ -115,14 +78,12 @@ export class Toast<ConfigPayload = any> implements OnDestroy {
 
   protected readonly toastrService: ToastrService = inject(ToastrService);
   public readonly toastPackage: ToastPackage = inject(ToastPackage);
-  protected readonly ngZone: NgZone | null = inject(NgZone, { optional: true });
 
   constructor( ) {
     this.message = this.toastPackage.message;
     this.title = this.toastPackage.title;
     this.options = this.toastPackage.config;
     this.originalTimeout = this.toastPackage.config.timeOut;
-    this.toastClasses = `${this.toastPackage.toastType} ${this.toastPackage.config.toastClass}`;
     this.sub = this.toastPackage.toastRef.afterActivate().subscribe(() => {
       this.activateToast();
     });
@@ -155,18 +116,16 @@ export class Toast<ConfigPayload = any> implements OnDestroy {
    * activates toast and sets timeout
    */
   activateToast() {
-  // Allow element to render first
-  requestAnimationFrame(() => {
+    // Allow element to render first
     this.state.set({ ...this.state(), value: 'active' })
-  });
     if (
       !(this.options.disableTimeOut === true || this.options.disableTimeOut === 'timeOut') &&
       this.options.timeOut
     ) {
-      this.outsideTimeout(() => this.remove(), this.options.timeOut);
+      this.timeout = setTimeout ( ( ) => this.remove ( ), this.options.timeOut )
       this.hideTime = new Date().getTime() + this.options.timeOut;
       if (this.options.progressBar) {
-        this.outsideInterval(() => this.updateProgress(), 10);
+        this.intervalId = setInterval(() => this.updateProgress(), 10);
       }
     }
   }
@@ -196,12 +155,12 @@ export class Toast<ConfigPayload = any> implements OnDestroy {
     clearInterval(this.intervalId);
     this.state.set(({ ...this.state(), value: 'active' }));
 
-    this.outsideTimeout(() => this.remove(), this.originalTimeout);
+    this.timeout = setTimeout ( ( ) => this.remove ( ), this.originalTimeout )
     this.options.timeOut = this.originalTimeout;
     this.hideTime = new Date().getTime() + (this.options.timeOut || 0);
     this.width.set(-1);
     if (this.options.progressBar) {
-      this.outsideInterval(() => this.updateProgress(), 10);
+      this.intervalId = setInterval ( ( ) => this.updateProgress ( ), 10 )
     }
   }
 
@@ -214,10 +173,7 @@ export class Toast<ConfigPayload = any> implements OnDestroy {
     }
     clearTimeout(this.timeout);
     this.state.set(({ ...this.state(), value: 'removed' }));
-    this.outsideTimeout(
-      () => this.toastrService.remove(this.toastPackage.toastId),
-      +this.toastPackage.config.easeTime,
-    );
+    this.timeout = setTimeout ( ( ) => this.toastrService.remove ( this.toastPackage.toastId ), +this.toastPackage.config.easeTime )
   }
   @HostListener('click')
   tapToast() {
@@ -254,48 +210,12 @@ export class Toast<ConfigPayload = any> implements OnDestroy {
     ) {
       return;
     }
-    this.outsideTimeout(() => this.remove(), this.options.extendedTimeOut);
+    this.timeout = setTimeout ( ( ) => this.remove ( ), this.options.extendedTimeOut )
     this.options.timeOut = this.options.extendedTimeOut;
     this.hideTime = new Date().getTime() + (this.options.timeOut || 0);
     this.width.set(-1);
     if (this.options.progressBar) {
-      this.outsideInterval(() => this.updateProgress(), 10);
-    }
-  }
-
-  outsideTimeout(func: () => any, timeout: number) {
-    if (this.ngZone) {
-      this.ngZone.runOutsideAngular(
-        () =>
-          (this.timeout = setTimeout(
-            () => this.runInsideAngular(func),
-            timeout
-          ))
-      );
-    } else {
-      this.timeout = setTimeout(() => func(), timeout);
-    }
-  }
-
-  outsideInterval(func: () => any, timeout: number) {
-    if (this.ngZone) {
-      this.ngZone.runOutsideAngular(
-        () =>
-          (this.intervalId = setInterval(
-            () => this.runInsideAngular(func),
-            timeout
-          ))
-      );
-    } else {
-      this.intervalId = setInterval(() => func(), timeout);
-    }
-  }
-
-  private runInsideAngular(func: () => any) {
-    if (this.ngZone) {
-      this.ngZone.run(() => func());
-    } else {
-      func();
+      this.intervalId = setInterval ( ( ) => this.updateProgress ( ), 10 )
     }
   }
 }
