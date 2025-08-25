@@ -66,5 +66,8 @@
     "branches": [
       "master"
     ]
+  },
+  "volta": {
+    "node": "22.18.0"
   }
 }
