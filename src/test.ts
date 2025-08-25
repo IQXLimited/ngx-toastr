@@ -6,8 +6,5 @@ import { BrowserTestingModule, platformBrowserTesting } from '@angular/platform-
 // Initialize the Angular testing environment without zones
 getTestBed().initTestEnvironment (
   BrowserTestingModule,
-  platformBrowserTesting ( ),
-  {
-    teardown: { destroyAfterEach: false } // optional, keep if needed
-  }
+  platformBrowserTesting ( )
 )
