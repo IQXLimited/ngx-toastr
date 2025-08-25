@@ -26,7 +26,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_CHECKOUT_PAT }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -53,20 +53,20 @@ jobs:
             # Get the most recent merge commit message (which contains PR title)
             PR_TITLE=$(git log --oneline -1 --pretty=format:"%s")
             echo "PR Title: $PR_TITLE"
-            
+
             # Check for version indicators in PR title (case insensitive)
             if echo "$PR_TITLE" | grep -iE '\[major\]|major:|BREAKING' > /dev/null; then
               VERSION_TYPE="major"
               echo "Detected MAJOR version from PR title"
             elif echo "$PR_TITLE" | grep -iE '\[minor\]|minor:|feat:' > /dev/null; then
-              VERSION_TYPE="minor" 
+              VERSION_TYPE="minor"
               echo "Detected MINOR version from PR title"
             else
               VERSION_TYPE="patch"
               echo "Using default PATCH version"
             fi
           fi
-          
+
           echo "version_type=$VERSION_TYPE" >> $GITHUB_OUTPUT
           echo "Selected version type: $VERSION_TYPE"
 
@@ -76,7 +76,7 @@ jobs:
           VERSION_TYPE="${{ steps.version_type.outputs.version_type }}"
           npm version $VERSION_TYPE --no-git-tag-version
           NEW_VERSION=$(node -p "require('./package.json').version")
-          
+
           # Update the library's package.json version too
           node -e "
             const fs = require('fs');
@@ -84,7 +84,7 @@ jobs:
             libPkg.version = '$NEW_VERSION';
             fs.writeFileSync('src/lib/package.json', JSON.stringify(libPkg, null, 2) + '\n');
           "
-          
+
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
           echo "New version: $NEW_VERSION (incremented as $VERSION_TYPE)"
 
