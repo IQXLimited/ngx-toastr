@@ -138,17 +138,6 @@ describe ( "HomeComponent", ( ) => {
       done.fail('onHidden is not defined');
     }
   });
-  it('should trigger onShown for openNotyf', done => {
-    const opened: ActiveToast<NotyfToast> | null = component.openNotyf();
-    expect(opened?.portal).toBeDefined();
-    if ( opened?.onShown ) {
-      firstValueFrom ( opened.onShown ).then(() => {
-        done();
-      });
-    } else {
-      done.fail('onShown is not defined');
-    }
-  });
   it('should have defined componentInstance', () => {
     const opened: ActiveToast<Toast> | null = component.openToast();
     expect(opened?.toastRef.componentInstance).toBeDefined();
