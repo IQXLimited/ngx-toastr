@@ -1,0 +1,247 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Version increment type for NPM publish'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Only run on IQXLimited repo, not forks
+  check-repo:
+    runs-on: ubuntu-latest
+    outputs:
+      is-main-repo: ${{ steps.check.outputs.is-main-repo }}
+    steps:
+      - name: Check if running on main repository
+        id: check
+        run: |
+          if [[ "${{ github.repository }}" == "IQXLimited/ngx-toastr" ]]; then
+            echo "is-main-repo=true" >> $GITHUB_OUTPUT
+          else
+            echo "is-main-repo=false" >> $GITHUB_OUTPUT
+          fi
+
+  # Test and lint - runs on PRs and pushes
+  test-and-lint:
+    runs-on: ubuntu-latest
+    needs: check-repo
+    if: needs.check-repo.outputs.is-main-repo == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: PUPPETEER_SKIP_DOWNLOAD=true npm ci
+
+      - name: Run linting
+        run: npm run lint
+
+      - name: Run tests
+        run: npm run test:ci
+
+      - name: Build library
+        run: npm run build
+
+      - name: Upload coverage reports
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+
+  # Build and deploy demo to GitHub Pages - only on master push when demo files change
+  deploy-demo:
+    runs-on: ubuntu-latest
+    needs: [check-repo, test-and-lint]
+    if: |
+      needs.check-repo.outputs.is-main-repo == 'true' && 
+      github.ref == 'refs/heads/master' && 
+      github.event_name == 'push'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check if demo files changed
+        id: check-demo-changes
+        run: |
+          # Check if any demo-related files have changed
+          if git diff --name-only HEAD^ HEAD | grep -E "(^src/app/|^src/assets/|^src/index.html|^src/styles.scss|^src/environments/|^angular.json|^package.json)" > /dev/null; then
+            echo "demo-changed=true" >> $GITHUB_OUTPUT
+            echo "Demo files changed, will deploy to GitHub Pages"
+          else
+            echo "demo-changed=false" >> $GITHUB_OUTPUT
+            echo "No demo files changed, skipping GitHub Pages deployment"
+          fi
+
+      - name: Setup Node
+        if: steps.check-demo-changes.outputs.demo-changed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        if: steps.check-demo-changes.outputs.demo-changed == 'true'
+        run: PUPPETEER_SKIP_DOWNLOAD=true npm ci
+
+      - name: Build demo
+        if: steps.check-demo-changes.outputs.demo-changed == 'true'
+        run: npm run demo:build
+
+      - name: Setup Pages
+        if: steps.check-demo-changes.outputs.demo-changed == 'true'
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        if: steps.check-demo-changes.outputs.demo-changed == 'true'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist/browser
+
+      - name: Deploy to GitHub Pages
+        if: steps.check-demo-changes.outputs.demo-changed == 'true'
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  # Build and publish to NPM - only on master push when library files change or manual dispatch
+  publish-npm:
+    runs-on: ubuntu-latest
+    needs: [check-repo, test-and-lint]
+    if: |
+      needs.check-repo.outputs.is-main-repo == 'true' && 
+      (github.event_name == 'workflow_dispatch' || 
+       (github.ref == 'refs/heads/master' && github.event_name == 'push'))
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 2
+
+      - name: Check if library files changed
+        if: github.event_name != 'workflow_dispatch'
+        id: check-lib-changes
+        run: |
+          # Check if any library-related files have changed
+          if git diff --name-only HEAD^ HEAD | grep -E "(^src/lib/|^package.json|^tsconfig|^angular.json)" > /dev/null; then
+            echo "lib-changed=true" >> $GITHUB_OUTPUT
+            echo "Library files changed, will publish to NPM"
+          else
+            echo "lib-changed=false" >> $GITHUB_OUTPUT
+            echo "No library files changed, skipping NPM publish"
+          fi
+
+      - name: Setup Node
+        if: github.event_name == 'workflow_dispatch' || steps.check-lib-changes.outputs.lib-changed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        if: github.event_name == 'workflow_dispatch' || steps.check-lib-changes.outputs.lib-changed == 'true'
+        run: PUPPETEER_SKIP_DOWNLOAD=true npm ci
+
+      - name: Configure Git
+        if: github.event_name == 'workflow_dispatch' || steps.check-lib-changes.outputs.lib-changed == 'true'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Determine version type from PR title
+        if: github.event_name == 'workflow_dispatch' || steps.check-lib-changes.outputs.lib-changed == 'true'
+        id: version_type
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            # Use the manually selected version type
+            VERSION_TYPE="${{ github.event.inputs.version_type }}"
+          else
+            # Get the most recent merge commit message (which contains PR title)
+            PR_TITLE=$(git log --oneline -1 --pretty=format:"%s")
+            echo "PR Title: $PR_TITLE"
+            
+            # Check for version indicators in PR title (case insensitive)
+            if echo "$PR_TITLE" | grep -iE '\[major\]|major:|BREAKING' > /dev/null; then
+              VERSION_TYPE="major"
+              echo "Detected MAJOR version from PR title"
+            elif echo "$PR_TITLE" | grep -iE '\[minor\]|minor:|feat:' > /dev/null; then
+              VERSION_TYPE="minor" 
+              echo "Detected MINOR version from PR title"
+            else
+              VERSION_TYPE="patch"
+              echo "Using default PATCH version"
+            fi
+          fi
+          
+          echo "version_type=$VERSION_TYPE" >> $GITHUB_OUTPUT
+          echo "Selected version type: $VERSION_TYPE"
+
+      - name: Increment version
+        if: github.event_name == 'workflow_dispatch' || steps.check-lib-changes.outputs.lib-changed == 'true'
+        id: version
+        run: |
+          VERSION_TYPE="${{ steps.version_type.outputs.version_type }}"
+          npm version $VERSION_TYPE --no-git-tag-version
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          
+          # Update the library's package.json version too
+          node -e "
+            const fs = require('fs');
+            const libPkg = JSON.parse(fs.readFileSync('src/lib/package.json', 'utf8'));
+            libPkg.version = '$NEW_VERSION';
+            fs.writeFileSync('src/lib/package.json', JSON.stringify(libPkg, null, 2) + '\n');
+          "
+          
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "New version: $NEW_VERSION (incremented as $VERSION_TYPE)"
+
+      - name: Build package
+        if: github.event_name == 'workflow_dispatch' || steps.check-lib-changes.outputs.lib-changed == 'true'
+        run: npm run build
+
+      - name: Publish to NPM
+        if: github.event_name == 'workflow_dispatch' || steps.check-lib-changes.outputs.lib-changed == 'true'
+        run: npm publish ./dist --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Commit version change
+        if: github.event_name == 'workflow_dispatch' || steps.check-lib-changes.outputs.lib-changed == 'true'
+        run: |
+          git add package.json package-lock.json src/lib/package.json
+          git commit -m "chore: bump version to v${{ steps.version.outputs.new_version }}"
+          git tag "v${{ steps.version.outputs.new_version }}"
+          git push origin master --tags
