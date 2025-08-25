@@ -1,10 +1,10 @@
 {
-  "name": "ngx-toastr",
-  "version": "0.0.0-placeholder",
+  "name": "@iqx-limited/ngx-toastr",
+  "version": "1.0.0",
   "peerDependencies": {
-    "@angular/core": ">=16.0.0-0",
-    "@angular/common": ">=16.0.0-0",
-    "@angular/platform-browser": ">=16.0.0-0"
+    "@angular/core": ">=20.0.0-0",
+    "@angular/common": ">=20.0.0-0",
+    "@angular/platform-browser": ">=20.0.0-0"
   },
   "exports": {
     "./toastr": {
@@ -20,8 +20,11 @@
       "default": "./toastr-bs5-alert.scss"
     }
   },
-  "repository": "scttcper/ngx-toastr",
-  "homepage": "https://ngx-toastr.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IQXLimited/ngx-toastr.git"
+  },
+  "author": "IQX",
   "license": "MIT",
   "description": "Toastr for Angular",
   "keywords": [
@@ -40,8 +43,7 @@
   ],
   "ng-update": {},
   "publishConfig": {
-    "access": "public",
-    "provenance": true
+    "access": "public"
   },
   "release": {
     "branches": [

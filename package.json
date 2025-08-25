@@ -1,10 +1,13 @@
 {
-  "name": "ngx-toastr",
+  "name": "@iqx-limited/ngx-toastr",
   "description": "Toastr for Angular",
-  "homepage": "https://ngx-toastr.vercel.app",
-  "repository": "scttcper/ngx-toastr",
-  "version": "0.0.0-placeholder",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IQXLimited/ngx-toastr.git"
+  },
+  "version": "1.0.0",
   "license": "MIT",
+  "author": "IQX",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
