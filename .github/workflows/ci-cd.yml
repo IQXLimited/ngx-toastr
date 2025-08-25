@@ -184,19 +184,6 @@ jobs:
           token: ${{ secrets.GH_CHECKOUT_PAT }}
           fetch-depth: 2
 
-      - name: Check if library files changed
-        if: github.event_name != 'workflow_dispatch'
-        id: check-lib-changes
-        run: |
-          # Check if any library-related files have changed
-          if git diff --name-only HEAD^ HEAD | grep -E "(^src/lib/|^package.json|^tsconfig|^angular.json)" > /dev/null; then
-            echo "lib-changed=true" >> $GITHUB_OUTPUT
-            echo "Library files changed, will publish to NPM"
-          else
-            echo "lib-changed=false" >> $GITHUB_OUTPUT
-            echo "No library files changed, skipping NPM publish"
-          fi
-
       - name: Setup Node
         if: github.event_name == 'workflow_dispatch' || steps.check-lib-changes.outputs.lib-changed == 'true'
         uses: actions/setup-node@v4
@@ -246,7 +233,7 @@ jobs:
             # Get the most recent merge commit message (which contains PR title)
             PR_TITLE=$(git log --oneline -1 --pretty=format:"%s")
             echo "PR Title: $PR_TITLE"
-            
+
             # Check for version indicators in PR title (case insensitive)
             if echo "$PR_TITLE" | grep -iE '\[major\]|major:|BREAKING' > /dev/null; then
               VERSION_TYPE="major"
@@ -259,7 +246,7 @@ jobs:
               echo "Using default PATCH version"
             fi
           fi
-          
+
           echo "version_type=$VERSION_TYPE" >> $GITHUB_OUTPUT
           echo "Selected version type: $VERSION_TYPE"
 
@@ -270,7 +257,7 @@ jobs:
           VERSION_TYPE="${{ steps.version_type.outputs.version_type }}"
           npm version $VERSION_TYPE --no-git-tag-version
           NEW_VERSION=$(node -p "require('./package.json').version")
-          
+
           # Update the library's package.json version too
           node -e "
             const fs = require('fs');
@@ -278,7 +265,7 @@ jobs:
             libPkg.version = '$NEW_VERSION';
             fs.writeFileSync('src/lib/package.json', JSON.stringify(libPkg, null, 2) + '\n');
           "
-          
+
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
           echo "New version: $NEW_VERSION (incremented as $VERSION_TYPE)"
 

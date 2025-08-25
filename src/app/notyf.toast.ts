@@ -21,4 +21,3 @@ import { Toast } from '../lib/public_api';
   styleUrl: "./notyf.toast.component.scss"
 })
 export class NotyfToast extends Toast { }
-//# sourceMappingURL=notyf.toast.component.js.map
