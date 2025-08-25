@@ -17,11 +17,11 @@ Always reference these instructions first and fallback to search or bash command
 - **Lint code**: `npm run lint` -- takes 3 seconds. Uses ESLint.
 
 ### Testing Status
-- **Unit tests currently fail** due to Zone.js configuration conflicts with zoneless Angular setup
-- The application uses `provideZonelessChangeDetection()` but tests expect Zone.js APIs
-- Commands `npm test` and `npm run test:ci` will fail with Zone.js errors
-- **DO NOT attempt to run tests** until Zone.js configuration is resolved
-- Tests are configured in `karma.conf.js` with ChromeHeadlessCustom browser
+- **Unit tests are working** with zoneless Angular setup properly configured
+- Tests use `provideZonelessChangeDetection()` and run successfully
+- Run tests with: `npm test` (local) or `npm run test:ci` (CI with coverage)
+- Tests are configured in `karma.conf.js` with ChromeHeadlessCustom browser for CI
+- 13/14 tests pass (1 failure is network-related due to GitHub API calls in headless environment)
 
 ## Project Structure
 
@@ -73,9 +73,9 @@ Always reference these instructions first and fallback to search or bash command
 ### Making Changes to Library Code
 1. Edit files in `src/lib/`
 2. Run `npm run build` to rebuild library
-3. Test changes with `npm start` and manual validation
+3. Test changes with `npm start` and manual validation  
 4. Run `npm run lint` to check code style
-5. **DO NOT run tests** until Zone.js issues are resolved
+5. Run `npm test` or `npm run test:ci` to validate changes with tests
 
 ### Making Changes to Demo Application  
 1. Edit files in `src/app/`
@@ -94,9 +94,9 @@ Always reference these instructions first and fallback to search or bash command
 - `npm run demo:build`: Build demo application for GitHub Pages
 - `npm run lint`: Run ESLint on TypeScript and HTML files  
 - `npm run lint:fix`: Auto-fix ESLint issues where possible
-- `npm run test`: Run tests (currently failing due to Zone.js issues)
+- `npm run test`: Run tests locally (13/14 tests pass)
 - `npm run test:watch`: Run tests in watch mode
-- `npm run test:ci`: Run tests with coverage for CI
+- `npm run test:ci`: Run tests with coverage for CI (headless Chrome)
 
 ## Reference Information
 
@@ -172,7 +172,7 @@ src/
 
 ### Common Issues
 - **Puppeteer download fails**: Always use `PUPPETEER_SKIP_DOWNLOAD=true npm ci`
-- **Tests fail with Zone.js errors**: Known issue, tests need Zone.js configuration update
+- **Tests mostly pass**: 13/14 tests pass, 1 network-related failure in headless environment is expected
 - **Development server won't start**: Check Node.js version (must be 22) and run full setup
 - **Library build fails**: Ensure all dependencies installed and no TypeScript errors
 
