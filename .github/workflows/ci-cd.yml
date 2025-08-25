@@ -181,7 +181,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_CHECKOUT_PAT }}
           fetch-depth: 2
 
       - name: Check if library files changed
