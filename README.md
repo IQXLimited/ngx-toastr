@@ -3,21 +3,18 @@
 -------------------------------------------------------------------------------
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/scttcper/ngx-toastr/master/misc/documentation-assets/ngx-toastr-example.png" width="300" alt="Angular Toastr">
+  <img src="https://raw.githubusercontent.com/IQXLimited/ngx-toastr/master/misc/documentation-assets/ngx-toastr-example.png" width="300" alt="Angular Toastr">
   <br>
-  <h1>ngx-toastr</h1>
+  <h1>@iqx-limited/ngx-toastr</h1>
   <br>
-  <a href="https://www.npmjs.org/package/ngx-toastr">
-    <img src="https://badge.fury.io/js/ngx-toastr.svg" alt="npm">
-  </a>
-  <a href="https://codecov.io/github/scttcper/ngx-toastr">
-    <img src="https://img.shields.io/codecov/c/github/scttcper/ngx-toastr.svg" alt="codecov">
+  <a href="https://www.npmjs.com/package/@iqx-limited/ngx-toastr">
+    <img src="https://badge.fury.io/js/@iqx-limited%2Fngx-toastr.svg" alt="npm">
   </a>
   <br>
   <br>
 </div>
 
-DEMO: https://ngx-toastr.vercel.app
+DEMO: https://iqxlimited.github.io/ngx-toastr/
 
 ## Features
 
@@ -48,7 +45,7 @@ Latest version available for each version of Angular
 ## Install
 
 ```bash
-npm install ngx-toastr --save
+npm install @iqx-limited/ngx-toastr --save
 ```
 
 ## Setup
