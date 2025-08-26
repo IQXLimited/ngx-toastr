@@ -1,7 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { GhButtonModule } from '@ctrl/ngx-github-buttons';
-
 import { HeaderComponent } from './header.component';
 import { provideZonelessChangeDetection } from '@angular/core';
 
