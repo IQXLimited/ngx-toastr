@@ -30,7 +30,7 @@ jobs:
   # Test and lint - runs on PRs and pushes (skip for bot version bump commits)
   test-and-lint:
     runs-on: ubuntu-latest
-    if: ( github.event.pull_request.base.repo.owner.login == 'IQXLimited' && github.event.pull_request.merged == true ) || github.event_name == 'workflow_dispatch'
+    if: github.event.pull_request.base.repo.owner.login == 'IQXLimited' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
