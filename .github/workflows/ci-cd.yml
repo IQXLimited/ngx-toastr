@@ -30,7 +30,6 @@ jobs:
   # Test and lint - runs on PRs and pushes (skip for bot version bump commits)
   test-and-lint:
     runs-on: ubuntu-latest
-    needs: check-repo
     if: github.event.pull_request.base.repo.owner.login == 'IQXLimited' && ( github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch' )
     steps:
       - name: Checkout
@@ -62,7 +61,7 @@ jobs:
   # Build and deploy demo to GitHub Pages - only on master push when demo files change
   deploy-demo:
     runs-on: ubuntu-latest
-    needs: [check-repo, test-and-lint]
+    needs: [test-and-lint]
     if: github.event.pull_request.base.repo.owner.login == 'IQXLimited' && ( github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch' )
     environment:
       name: github-pages
@@ -116,7 +115,7 @@ jobs:
   # Build and publish to NPM - only on master push when library files change or manual dispatch
   publish-npm:
     runs-on: ubuntu-latest
-    needs: [check-repo, test-and-lint]
+    needs: [test-and-lint]
     if: github.event.pull_request.base.repo.owner.login == 'IQXLimited' && ( github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch' )
     steps:
       - name: Checkout
