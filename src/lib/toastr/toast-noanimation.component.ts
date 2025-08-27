@@ -36,8 +36,8 @@ import { ToastrService } from './toastr.service';
           </span>
         </div>
       }
-      @if (options.enableHtml) {
-        @if (message) {
+      @if (message) {
+        @if (options.enableHtml) {
           <div role="alert"
             [class]="options.messageClass" [innerHTML]="message">
           </div>

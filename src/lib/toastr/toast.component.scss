@@ -1,7 +1,7 @@
 :host {
   display: block;
   opacity: 0;
-  transition: opacity 300ms ease-in-out;
+  transition: opacity var(--ease-time, 300ms) var(--easing, ease-in-out);
 }
 
 :host(.active) {
