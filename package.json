@@ -5,7 +5,7 @@
     "type": "git",
     "url": "git+https://github.com/IQXLimited/ngx-toastr.git"
   },
-  "version": "1.0.3",
+  "version": "1.0.4",
   "license": "MIT",
   "author": "IQX Limited",
   "scripts": {
@@ -41,9 +41,9 @@
     "@types/jasmine": "5.1.9",
     "@types/lodash-es": "4.17.12",
     "@types/node": "24.3.0",
-    "@typescript-eslint/eslint-plugin": "8.40.0",
-    "@typescript-eslint/parser": "8.40.0",
-    "bootstrap": "5.3.7",
+    "@typescript-eslint/eslint-plugin": "8.41.0",
+    "@typescript-eslint/parser": "8.41.0",
+    "bootstrap": "5.3.8",
     "cpy-cli": "6.0.0",
     "eslint": "9.34.0",
     "jasmine-core": "5.9.0",

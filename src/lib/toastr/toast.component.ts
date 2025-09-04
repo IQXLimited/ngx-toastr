@@ -29,8 +29,8 @@ import { ToastrService } from './toastr.service';
         }
       </div>
     }
-    @if (options.enableHtml) {
-      @if (message) {
+    @if (message) {
+      @if (options.enableHtml) {
         <div role="alert" [class]="options.messageClass" [innerHTML]="message">
         </div>
       } @else {
@@ -50,6 +50,8 @@ import { ToastrService } from './toastr.service';
     '[class]': 'toastPackage.toastType + " " + toastPackage.config.toastClass',
     '[class.active]': 'state().value === "active"',
     '[class.removed]': 'state().value === "removed"',
+    '[style.--ease-time.ms]':'state().params.easeTime',
+    '[style.--easing]':'state().params.easing',
   },
   preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush
