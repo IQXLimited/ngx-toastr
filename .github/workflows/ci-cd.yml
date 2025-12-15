@@ -33,12 +33,12 @@ jobs:
     if: github.event.pull_request.base.repo.owner.login == 'IQXLimited' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.1
 
       - name: Setup Node
-        uses: actions/setup-node@v4.4.0
+        uses: actions/setup-node@v6.1.0
         with:
-          node-version: 22
+          node-version: 24
 
       - name: Install dependencies
         run: PUPPETEER_SKIP_DOWNLOAD=true npm ci
@@ -53,7 +53,7 @@ jobs:
         run: npm run build
 
       - name: Upload coverage reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6.0.0
         with:
           name: coverage-report
           path: coverage/
@@ -68,7 +68,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.1
         with:
           fetch-depth: 2
 
@@ -85,9 +85,9 @@ jobs:
           fi
 
       - name: Setup Node
-        uses: actions/setup-node@v4.4.0
+        uses: actions/setup-node@v6.1.0
         with:
-          node-version: 22
+          node-version: 24
 
       - name: Install dependencies
         if: steps.check-demo-changes.outputs.demo-changed == 'true'
@@ -103,14 +103,14 @@ jobs:
 
       - name: Upload artifact
         if: steps.check-demo-changes.outputs.demo-changed == 'true'
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ./dist/browser
 
       - name: Deploy to GitHub Pages
         if: steps.check-demo-changes.outputs.demo-changed == 'true'
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v4.0.5
 
   # Build and publish to NPM - only on master push when library files change or manual dispatch
   publish-npm:
@@ -119,15 +119,15 @@ jobs:
     if: ( github.event.pull_request.base.repo.owner.login == 'IQXLimited' && github.event.pull_request.merged == true ) || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.1
         with:
           token: ${{ secrets.GH_CHECKOUT_PAT }}
           fetch-depth: 2
 
       - name: Setup Node
-        uses: actions/setup-node@v4.4.0
+        uses: actions/setup-node@v6.1.0
         with:
-          node-version: 22
+          node-version: 24
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
