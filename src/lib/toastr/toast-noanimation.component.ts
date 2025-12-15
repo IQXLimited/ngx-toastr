@@ -55,8 +55,7 @@ import { ToastrService } from './toastr.service';
       }
     `,
     host: {
-      '[class]': 'toastPackage.toastType + " " + toastPackage.config.toastClass',
-      '[style.display]': 'displayStyle',
+      '[class]': 'toastPackage.toastType + " " + toastPackage.config.toastClass'
     },
     changeDetection: ChangeDetectionStrategy.OnPush
 })

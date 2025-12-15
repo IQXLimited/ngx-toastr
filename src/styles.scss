@@ -1,3 +1,5 @@
+@use "sass:color";
+
 // Configuration
 @import "bootstrap/scss/functions";
 @import "bootstrap/scss/variables";
@@ -11,34 +13,12 @@ $enable-gradients: true;
 @import "bootstrap/scss/root";
 @import "bootstrap/scss/reboot";
 @import "bootstrap/scss/type";
-// @import "bootstrap/scss/images";
 @import "bootstrap/scss/containers";
 @import "bootstrap/scss/grid";
-// @import "bootstrap/scss/tables";
 @import "bootstrap/scss/forms";
 @import "bootstrap/scss/buttons";
-// @import "bootstrap/scss/transitions";
-// @import "bootstrap/scss/dropdown";
-// @import "bootstrap/scss/button-group";
-// @import "bootstrap/scss/nav";
-// @import "bootstrap/scss/navbar";
 @import "bootstrap/scss/card";
-// @import "bootstrap/scss/accordion";
-// @import "bootstrap/scss/breadcrumb";
-// @import "bootstrap/scss/pagination";
-// @import "bootstrap/scss/badge";
-// @import "bootstrap/scss/alert";
-// @import "bootstrap/scss/progress";
-// @import "bootstrap/scss/list-group";
 @import "bootstrap/scss/close";
-// @import "bootstrap/scss/toasts";
-// @import "bootstrap/scss/modal";
-// @import "bootstrap/scss/tooltip";
-// @import "bootstrap/scss/popover";
-// @import "bootstrap/scss/carousel";
-// @import "bootstrap/scss/spinners";
-// @import "bootstrap/scss/offcanvas";
-// @import "bootstrap/scss/placeholders";
 
 // Helpers
 @import "bootstrap/scss/helpers";
@@ -66,13 +46,13 @@ code {
   color: #FFFFFF;
   background-color: $pink;
   border-color: $pink;
-  background: $pink linear-gradient(180deg, $pink, darken($pink, 10%)) repeat-x;
+  background: $pink linear-gradient(180deg, $pink, color.adjust($pink, $lightness: -10%)) repeat-x;
   border-color: $pink;
 }
 .btn-pink:hover {
-  background-color: darken($pink, 10%);
-  background: darken($pink, 10%) linear-gradient(180deg, darken($pink, 5%), darken($pink, 15%)) repeat-x;
-  border-color: darken($pink, 10%);
+  background-color: color.adjust($pink, $lightness: -10%);
+  background: color.adjust($pink, $lightness: -10%) linear-gradient(180deg, color.adjust($pink, $lightness: -5%), color.adjust($pink, $lightness: -15%)) repeat-x;
+  border-color: color.adjust($pink, $lightness: -10%);
 }
 
 .toast-container.inline {

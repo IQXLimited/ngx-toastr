@@ -32,14 +32,8 @@ Latest version available for each version of Angular
 
 | ngx-toastr | Angular     |
 | ---------- | ----------- |
-| 13.2.1     | 10.x 11.x   |
-| 14.3.0     | 12.x 13.x   |
-| 15.2.2     | 14.x.       |
-| 16.2.0     | 15.x        |
-| 17.0.2     | 16.x        |
-| 18.0.0     | 17.x        |
-| 19.0.0     | 18.x        |
-| current    | 20.x        |
+| 1.0.0      | 20.x        |
+| 2.0.0      | 21.x        |
 
 ## Install
 
