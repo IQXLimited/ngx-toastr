@@ -1,6 +1,6 @@
 # ngx-toastr Angular Library
 
-**ngx-toastr** is an Angular 20.x library that provides customizable toast notifications. It's a fork of the original ngx-toastr with additional features and fixes. The project includes both the library source code and a demo application showcasing its capabilities.
+**ngx-toastr** is an Angular 21.x library that provides customizable toast notifications. It's a fork of the original ngx-toastr with additional features and fixes. The project includes both the library source code and a demo application showcasing its capabilities.
 
 Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.
 
