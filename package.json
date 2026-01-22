@@ -54,7 +54,7 @@
     "karma-coverage-istanbul-reporter": "3.0.3",
     "karma-jasmine": "5.1.0",
     "karma-jasmine-html-reporter": "2.1.0",
-    "lodash-es": "4.17.22",
+    "lodash-es": "4.17.23",
     "ng-packagr": "21.1.0",
     "puppeteer": "24.35.0",
     "rxjs": "7.8.2",
