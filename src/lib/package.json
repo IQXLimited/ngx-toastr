@@ -8,13 +8,7 @@
   },
   "exports": {
     "./toastr": {
-      "default": "./toastr.css"
-    },
-    "./toastr-old": {
-      "default": "./toastr-old.css"
-    },
-    "./toastr-bs4-alert": {
-      "default": "./toastr-bs4-alert.scss"
+      "default": "./toastr.scss"
     },
     "./toastr-bs5-alert": {
       "default": "./toastr-bs5-alert.scss"
@@ -24,7 +18,7 @@
     "type": "git",
     "url": "git+https://github.com/IQXLimited/ngx-toastr.git"
   },
-  "author": "IQX",
+  "author": "IQX Limited",
   "license": "MIT",
   "description": "Toastr for Angular",
   "keywords": [

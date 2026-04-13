@@ -54,11 +54,6 @@ npm install @iqx-limited/ngx-toastr --save
 // regular style toast
 @import 'ngx-toastr/toastr';
 
-// bootstrap style toast
-// or import a bootstrap 4 alert styled design (SASS ONLY)
-// should be after your bootstrap imports, it uses bs4 variables, mixins, functions
-@import 'ngx-toastr/toastr-bs4-alert';
-
 // if you'd like to use it without importing all of bootstrap it requires
 @import 'bootstrap/scss/functions';
 @import 'bootstrap/scss/variables';
@@ -72,7 +67,7 @@ npm install @iqx-limited/ngx-toastr --save
 ```ts
 "styles": [
   "styles.scss",
-  "node_modules/ngx-toastr/toastr.css" // try adding '../' if you're using angular cli before 6
+  "node_modules/ngx-toastr/toastr.scss" // try adding '../' if you're using angular cli before 6
 ]
 ```
 
