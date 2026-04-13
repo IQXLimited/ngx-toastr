@@ -1,0 +1,34 @@
+@if (options.closeButton) {
+  <button (click)="remove()" type="button" class="toast-close-button" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+}
+@if (title) {
+  <div [class]="options.titleClass" [attr.aria-label]="title">
+    <span>
+      {{ title }}
+      @if (duplicatesCount) {
+        <ng-container>
+          [{{ duplicatesCount + 1 }}]
+        </ng-container>
+      }
+    </span>
+  </div>
+}
+@if (message) {
+  @if (options.enableHtml) {
+    <div role="alert"
+      [class]="options.messageClass" [innerHTML]="message">
+    </div>
+  } @else {
+    <div role="alert"
+      [class]="options.messageClass" [attr.aria-label]="message">
+      {{ message }}
+    </div>
+  }
+}
+@if (options.progressBar) {
+  <div>
+    <div class="toast-progress" [style.width]="width() + '%'"></div>
+  </div>
+}

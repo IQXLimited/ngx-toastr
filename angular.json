@@ -20,6 +20,17 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "stylePreprocessorOptions": {
+              "sass": {
+                "silenceDeprecations": [
+                  "import",
+                  "global-builtin",
+                  "color-functions",
+                  "abs-percent",
+                  "if-function"
+                ]
+              }
+            },
             "outputPath": "dist",
             "index": "src/index.html",
             "browser": "src/main.ts",
@@ -28,16 +39,7 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": [ ],
-            "stylePreprocessorOptions": {
-              "sass": {
-                "silenceDeprecations": [
-                  "color-functions",
-                  "global-builtin",
-                  "import"
-                ]
-              }
-            }
+            "scripts": [ ]
           },
           "configurations": {
             "production": {

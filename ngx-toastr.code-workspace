@@ -4,5 +4,12 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"editor.formatOnSave": true,
+		"editor.defaultFormatter": "dbaeumer.vscode-eslint",
+		"[html]":{
+			"editor.formatOnSave": false,
+			"editor.defaultFormatter": "vscode.html-language-features"
+		}
+	}
 }

@@ -1,260 +1,261 @@
-import { ComponentRef, inject, Injectable, Injector, SecurityContext } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import { ComponentRef, inject, Injectable, Injector, SecurityContext } from "@angular/core"
+import { DomSanitizer } from "@angular/platform-browser"
 
-import { Observable } from 'rxjs';
+import { Observable } from "rxjs"
 
-import { Overlay } from '../overlay/overlay';
-import { ComponentPortal } from '../portal/portal';
-import { ToastRef } from './toast-ref';
-import { ToastContainerDirective } from './toast.directive';
+import { Overlay } from "../overlay/overlay"
+import { ComponentPortal } from "../portal/portal"
+import { ToastRef } from "./toast-ref"
+import { ToastContainerDirective } from "./toast.directive"
 import {
   GlobalConfig,
   IndividualConfig,
   ToastPackage,
   ToastToken,
   TOAST_CONFIG,
-} from './toastr-config';
+} from "./toastr-config"
 
 export interface ActiveToast<C> {
   /** Your Toast ID. Use this to close it individually */
-  toastId: number;
+  toastId: number
   /** the title of your toast. Stored to prevent duplicates */
-  title: string;
+  title: string
   /** the message of your toast. Stored to prevent duplicates */
-  message: string;
+  message: string
   /** a reference to the component see portal.ts */
-  portal: ComponentRef<C>;
+  portal: ComponentRef<C>
   /** a reference to your toast */
-  toastRef: ToastRef<C>;
+  toastRef: ToastRef<C>
   /** triggered when toast is active */
-  onShown: Observable<void>;
+  onShown: Observable<void>
   /** triggered when toast is destroyed */
-  onHidden: Observable<void>;
+  onHidden: Observable<void>
   /** triggered on toast click */
-  onTap: Observable<void>;
+  onTap: Observable<void>
   /** available for your use in custom toast */
-  onAction: Observable<any>;
+  onAction: Observable<any>
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable ( { providedIn: "root" } )
 export class ToastrService {
-  toastrConfig: GlobalConfig;
-  currentlyActive = 0;
-  toasts: ActiveToast<any>[] = [];
-  overlayContainer?: ToastContainerDirective;
-  previousToastMessage: string | undefined;
-  private index = 0;
+  public toastrConfig: GlobalConfig
+  public currentlyActive = 0
+  public toasts: ActiveToast<any>[] = []
+  public overlayContainer?: ToastContainerDirective
+  public previousToastMessage: string | undefined
 
-  public readonly token: ToastToken = inject(TOAST_CONFIG);
-  private readonly overlay: Overlay = inject(Overlay);
-  private readonly sanitizer: DomSanitizer = inject(DomSanitizer);
-  private readonly _injector: Injector = inject(Injector);
+  public readonly token: ToastToken = inject ( TOAST_CONFIG )
+  private readonly overlay: Overlay = inject ( Overlay )
+  private readonly sanitizer: DomSanitizer = inject ( DomSanitizer )
+  private readonly injector: Injector = inject ( Injector )
 
-  constructor() {
+  private index = 0
+
+  public constructor ( ) {
     this.toastrConfig = {
       ...this.token.default,
       ...this.token.config,
-    };
-    if (this.token.config.iconClasses) {
+    }
+    if ( this.token.config.iconClasses ) {
       this.toastrConfig.iconClasses = {
         ...this.token.default.iconClasses,
         ...this.token.config.iconClasses,
-      };
+      }
     }
   }
   /** show toast */
-  show<ConfigPayload = any>(message?: string, title?: string, override: Partial<IndividualConfig<ConfigPayload>> = {}, type = '') {
-    return this._preBuildNotification(type, message, title, this.applyConfig(override));
+  public show<ConfigPayload = any> ( message?: string, title?: string, override: Partial<IndividualConfig<ConfigPayload>> = { }, type = "" ) {
+    return this.preBuildNotification ( type, message, title, this.applyConfig ( override ) )
   }
   /** show successful toast */
-  success<ConfigPayload = any>(message?: string, title?: string, override: Partial<IndividualConfig<ConfigPayload>> = {}) {
-    const type = this.toastrConfig.iconClasses.success || '';
-    return this._preBuildNotification(type, message, title, this.applyConfig(override));
+  public success<ConfigPayload = any>( message?: string, title?: string, override: Partial<IndividualConfig<ConfigPayload>> = { } ) {
+    const type = this.toastrConfig.iconClasses.success || ""
+    return this.preBuildNotification ( type, message, title, this.applyConfig ( override ) )
   }
   /** show error toast */
-  error<ConfigPayload = any>(message?: string, title?: string, override: Partial<IndividualConfig<ConfigPayload>> = {}) {
-    const type = this.toastrConfig.iconClasses.error || '';
-    return this._preBuildNotification(type, message, title, this.applyConfig(override));
+  public error<ConfigPayload = any>( message?: string, title?: string, override: Partial<IndividualConfig<ConfigPayload>> = { } ) {
+    const type = this.toastrConfig.iconClasses.error || ""
+    return this.preBuildNotification ( type, message, title, this.applyConfig ( override ) )
   }
   /** show info toast */
-  info<ConfigPayload = any>(message?: string, title?: string, override: Partial<IndividualConfig<ConfigPayload>> = {}) {
-    const type = this.toastrConfig.iconClasses.info || '';
-    return this._preBuildNotification(type, message, title, this.applyConfig(override));
+  public info<ConfigPayload = any>( message?: string, title?: string, override: Partial<IndividualConfig<ConfigPayload>> = { } ) {
+    const type = this.toastrConfig.iconClasses.info || ""
+    return this.preBuildNotification ( type, message, title, this.applyConfig ( override ) )
   }
   /** show warning toast */
-  warning<ConfigPayload = any>(message?: string, title?: string, override: Partial<IndividualConfig<ConfigPayload>> = {}) {
-    const type = this.toastrConfig.iconClasses.warning || '';
-    return this._preBuildNotification(type, message, title, this.applyConfig(override));
+  public warning<ConfigPayload = any>( message?: string, title?: string, override: Partial<IndividualConfig<ConfigPayload>> = { } ) {
+    const type = this.toastrConfig.iconClasses.warning || ""
+    return this.preBuildNotification ( type, message, title, this.applyConfig ( override ) )
   }
   /**
    * Remove all or a single toast by id
    */
-  clear(toastId?: number) {
+  public clear ( toastId?: number ) {
     // Call every toastRef manualClose function
-    for (const toast of this.toasts) {
-      if (toastId !== undefined) {
-        if (toast.toastId === toastId) {
-          toast.toastRef.manualClose();
-          return;
+    for ( const toast of this.toasts ) {
+      if ( toastId !== undefined ) {
+        if ( toast.toastId === toastId ) {
+          toast.toastRef.manualCloseComplete ( )
+          return
         }
       } else {
-        toast.toastRef.manualClose();
+        toast.toastRef.manualCloseComplete ( )
       }
     }
   }
   /**
    * Remove and destroy a single toast by id
    */
-  remove(toastId: number) {
-    const found = this._findToast(toastId);
-    if (!found) {
-      return false;
+  public remove ( toastId: number ) {
+    const found = this.findToast ( toastId )
+    if ( !found ) {
+      return false
     }
-    found.activeToast.toastRef.close();
-    this.toasts.splice(found.index, 1);
-    this.currentlyActive = this.currentlyActive - 1;
-    if (!this.toastrConfig.maxOpened || !this.toasts.length) {
-      return false;
+    found.activeToast.toastRef.close ( )
+    this.toasts.splice ( found.index, 1 )
+    this.currentlyActive = this.currentlyActive - 1
+    if ( !this.toastrConfig.maxOpened || !this.toasts.length ) {
+      return false
     }
-    if (this.currentlyActive < this.toastrConfig.maxOpened && this.toasts[this.currentlyActive]) {
-      const p = this.toasts[this.currentlyActive].toastRef;
-      if (!p.isInactive()) {
-        this.currentlyActive = this.currentlyActive + 1;
-        p.activate();
+    if ( this.currentlyActive < this.toastrConfig.maxOpened && this.toasts[this.currentlyActive] ) {
+      const p = this.toasts[this.currentlyActive].toastRef
+      if ( !p.isInactive ( ) ) {
+        this.currentlyActive = this.currentlyActive + 1
+        p.activateComplete ( )
       }
     }
-    return true;
+    return true
   }
 
   /**
    * Determines if toast message is already shown
    */
-  findDuplicate(title = '', message = '', resetOnDuplicate: boolean, countDuplicates: boolean) {
-    const { includeTitleDuplicates } = this.toastrConfig;
+  public findDuplicate ( title = "", message = "", resetOnDuplicate: boolean, countDuplicates: boolean ) {
+    const { includeTitleDuplicates } = this.toastrConfig
 
-    for (const toast of this.toasts) {
-      const hasDuplicateTitle = includeTitleDuplicates && toast.title === title;
-      if ((!includeTitleDuplicates || hasDuplicateTitle) && toast.message === message) {
-        toast.toastRef.onDuplicate(resetOnDuplicate, countDuplicates);
-        return toast;
+    for ( const toast of this.toasts ) {
+      const hasDuplicateTitle = includeTitleDuplicates && toast.title === title
+      if ( ( !includeTitleDuplicates || hasDuplicateTitle ) && toast.message === message ) {
+        toast.toastRef.onDuplicate ( resetOnDuplicate, countDuplicates )
+        return toast
       }
     }
 
-    return null;
+    return null
   }
 
   /** create a clone of global config and apply individual settings */
-  private applyConfig(override: Partial<IndividualConfig> = {}): GlobalConfig {
-    return { ...this.toastrConfig, ...override };
+  private applyConfig ( override: Partial<IndividualConfig> = {} ): GlobalConfig {
+    return { ...this.toastrConfig, ...override }
   }
 
   /**
    * Find toast object by id
    */
-  private _findToast(toastId: number): { index: number; activeToast: ActiveToast<any> } | null {
-    for (let i = 0; i < this.toasts.length; i++) {
-      if (this.toasts[i].toastId === toastId) {
-        return { index: i, activeToast: this.toasts[i] };
+  private findToast ( toastId: number ): { index: number; activeToast: ActiveToast<any> } | null {
+    for ( let i = 0; i < this.toasts.length; i++ ) {
+      if ( this.toasts[i].toastId === toastId ) {
+        return { index: i, activeToast: this.toasts[i] }
       }
     }
-    return null;
+    return null
   }
 
   /**
    * Determines the need to run inside angular's zone then builds the toast
    */
-  private _preBuildNotification(
+  private preBuildNotification (
     toastType: string,
     message: string | undefined,
     title: string | undefined,
     config: GlobalConfig,
   ): ActiveToast<any> | null {
-    return this._buildNotification(toastType, message, title, config);
+    return this.buildNotification ( toastType, message, title, config )
   }
 
   /**
    * Creates and attaches toast data to component
    * returns the active toast, or in case preventDuplicates is enabled the original/non-duplicate active toast.
    */
-  private _buildNotification(
+  private buildNotification (
     toastType: string,
     message: string | undefined,
     title: string | undefined,
     config: GlobalConfig,
   ): ActiveToast<any> | null {
-    if (!config.toastComponent) {
-      throw new Error('toastComponent required');
+    if ( !config.toastComponent ) {
+      throw new Error ( "toastComponent required" )
     }
     // max opened and auto dismiss = true
-    // if timeout = 0 resetting it would result in setting this.hideTime = Date.now(). Hence, we only want to reset timeout if there is
+    // if timeout = 0 resetting it would result in setting this.hideTime = Date.now ( ). Hence, we only want to reset timeout if there is
     // a timeout at all
-    const duplicate = this.findDuplicate(
+    const duplicate = this.findDuplicate (
       title,
       message,
       this.toastrConfig.resetTimeoutOnDuplicate && config.timeOut > 0,
       this.toastrConfig.countDuplicates,
-    );
+    )
     if (
-      ((this.toastrConfig.includeTitleDuplicates && title) || message) &&
+      ( ( this.toastrConfig.includeTitleDuplicates && title ) || message ) &&
       this.toastrConfig.preventDuplicates &&
       duplicate !== null
     ) {
-      return duplicate;
+      return duplicate
     }
 
-    this.previousToastMessage = message;
-    let keepInactive = false;
-    if (this.toastrConfig.maxOpened && this.currentlyActive >= this.toastrConfig.maxOpened) {
-      keepInactive = true;
-      if (this.toastrConfig.autoDismiss) {
-        this.clear(this.toasts[0].toastId);
+    this.previousToastMessage = message
+    let keepInactive = false
+    if ( this.toastrConfig.maxOpened && this.currentlyActive >= this.toastrConfig.maxOpened ) {
+      keepInactive = true
+      if ( this.toastrConfig.autoDismiss ) {
+        this.clear ( this.toasts[0].toastId )
       }
     }
 
-    const overlayRef = this.overlay.create(config.positionClass, this.overlayContainer);
-    this.index = this.index + 1;
-    let sanitizedMessage: string | undefined | null = message;
-    if (message && config.enableHtml) {
-      sanitizedMessage = this.sanitizer.sanitize(SecurityContext.HTML, message);
+    const overlayRef = this.overlay.create ( config.positionClass, this.overlayContainer )
+    this.index = this.index + 1
+    let sanitizedMessage: string | undefined | null = message
+    if ( message && config.enableHtml ) {
+      sanitizedMessage = this.sanitizer.sanitize ( SecurityContext.HTML, message )
     }
 
-    const toastRef = new ToastRef(overlayRef);
-    const toastPackage = new ToastPackage(
+    const toastRef = new ToastRef ( overlayRef )
+    const toastPackage = new ToastPackage (
       this.index,
       config,
       sanitizedMessage,
       title,
       toastType,
       toastRef,
-    );
+    )
 
     /** New injector that contains an instance of `ToastPackage`. */
-    const providers = [{provide: ToastPackage, useValue: toastPackage}];
-    const toastInjector = Injector.create({providers, parent: this._injector});
+    const providers = [ { provide: ToastPackage, useValue: toastPackage } ]
+    const toastInjector = Injector.create ( { providers, parent: this.injector } )
 
-    const component = new ComponentPortal(config.toastComponent, toastInjector);
-    const portal = overlayRef.attach(component, config.newestOnTop);
-    toastRef.componentInstance = portal.instance;
+    const component = new ComponentPortal ( config.toastComponent, toastInjector )
+    const portal = overlayRef.attach ( component, config.newestOnTop )
+    toastRef.componentInstance = portal.instance
     const ins: ActiveToast<any> = {
       toastId: this.index,
-      title: title || '',
-      message: message || '',
+      title: title || "",
+      message: message || "",
       toastRef,
-      onShown: toastRef.afterActivate(),
-      onHidden: toastRef.afterClosed(),
-      onTap: toastPackage.onTap(),
-      onAction: toastPackage.onAction(),
+      onShown: toastRef.afterActivate ( ),
+      onHidden: toastRef.afterClosedObservable ( ),
+      onTap: toastPackage.onTapObservable ( ),
+      onAction: toastPackage.onActionObservable ( ),
       portal,
-    };
-
-    if (!keepInactive) {
-      this.currentlyActive = this.currentlyActive + 1;
-      setTimeout(() => {
-        ins.toastRef.activate();
-      });
     }
 
-    this.toasts.push(ins);
-    return ins;
+    if ( !keepInactive ) {
+      this.currentlyActive = this.currentlyActive + 1
+      setTimeout ( ( ) => {
+        ins.toastRef.activateComplete ( )
+      } )
+    }
+
+    this.toasts.push ( ins )
+    return ins
   }
 }

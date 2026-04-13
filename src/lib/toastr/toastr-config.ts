@@ -1,12 +1,12 @@
-import { InjectionToken } from '@angular/core';
+import { InjectionToken } from "@angular/core"
 
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject } from "rxjs"
 
-import { ComponentType } from '../portal/portal';
-import { ToastRef } from './toast-ref';
+import { ComponentType } from "../portal/portal"
+import { ToastRef } from "./toast-ref"
 
-export type ProgressAnimationType = 'increasing' | 'decreasing';
-export type DisableTimoutType = boolean | 'timeOut' | 'extendedTimeOut';
+export type ProgressAnimationType = "increasing" | "decreasing"
+export type DisableTimoutType = boolean | "timeOut" | "extendedTimeOut"
 
 /**
  * Configuration for an individual toast.
@@ -16,102 +16,102 @@ export interface IndividualConfig<ConfigPayload = any> {
    * disable both timeOut and extendedTimeOut
    * default: false
    */
-  disableTimeOut: DisableTimoutType;
+  disableTimeOut: DisableTimoutType
   /**
    * toast time to live in milliseconds
    * default: 5000
    */
-  timeOut: number;
+  timeOut: number
   /**
    * toast show close button
    * default: false
    */
-  closeButton: boolean;
+  closeButton: boolean
   /**
    * time to close after a user hovers over toast
    * default: 1000
    */
-  extendedTimeOut: number;
+  extendedTimeOut: number
   /**
    * show toast progress bar
    * default: false
    */
-  progressBar: boolean;
+  progressBar: boolean
 
   /**
    * changes toast progress bar animation
    * default: decreasing
    */
-  progressAnimation: ProgressAnimationType;
+  progressAnimation: ProgressAnimationType
 
   /**
    * render html in toast message (possibly unsafe)
    * default: false
    */
-  enableHtml: boolean;
+  enableHtml: boolean
   /**
    * css class on toast component
    * default: ngx-toastr
    */
-  toastClass: string;
+  toastClass: string
   /**
    * css class on toast container
    * default: toast-top-right
    */
-  positionClass: string;
+  positionClass: string
   /**
    * css class on toast title
    * default: toast-title
    */
-  titleClass: string;
+  titleClass: string
   /**
    * css class on toast message
    * default: toast-message
    */
-  messageClass: string;
+  messageClass: string
   /**
    * animation easing on toast
    * default: ease-in
    */
-  easing: string;
+  easing: string
   /**
    * animation ease time on toast
    * default: 300
    */
-  easeTime: string | number;
+  easeTime: string | number
   /**
    * clicking on toast dismisses it
    * default: true
    */
-  tapToDismiss: boolean;
+  tapToDismiss: boolean
   /**
    * Angular toast component to be shown
    * default: Toast
    */
-  toastComponent?: ComponentType<any>;
+  toastComponent?: ComponentType<any>
   /**
    * Helps show toast from a websocket or from event outside Angular
    * default: false
    */
-  onActivateTick: boolean;
+  onActivateTick: boolean
   /**
    * New toast placement
    * default: true
    */
-  newestOnTop: boolean;
+  newestOnTop: boolean
 
   /**
    * Payload to pass to the toast component
    */
-  payload?: ConfigPayload;
+  payload?: ConfigPayload
 }
 
 export interface ToastrIconClasses {
-  error: string;
-  info: string;
-  success: string;
-  warning: string;
-  [key: string]: string;
+  [key: string]: string
+  error: string
+  info: string
+  success: string
+  warning: string
 }
 
 /**
@@ -124,43 +124,43 @@ export interface GlobalConfig extends IndividualConfig {
    * Zero is unlimited
    * default: 0
    */
-  maxOpened: number;
+  maxOpened: number
   /**
    * dismiss current toast when max is reached
    * default: false
    */
-  autoDismiss: boolean;
-  iconClasses: Partial<ToastrIconClasses>;
+  autoDismiss: boolean
+  iconClasses: Partial<ToastrIconClasses>
   /**
    * block duplicate messages
    * default: false
    */
-  preventDuplicates: boolean;
+  preventDuplicates: boolean
   /**
    * display the number of duplicate messages
    * default: false
    */
-  countDuplicates: boolean;
+  countDuplicates: boolean
   /**
    * Reset toast timeout when there's a duplicate (preventDuplicates needs to be set to true)
    * default: false
    */
-  resetTimeoutOnDuplicate: boolean;
+  resetTimeoutOnDuplicate: boolean
   /**
    * consider the title of a toast when checking if duplicate
    * default: false
    */
-  includeTitleDuplicates: boolean;
+  includeTitleDuplicates: boolean
 }
 
 /**
  * Everything a toast needs to launch
  */
 export class ToastPackage<ConfigPayload = any> {
-  private _onTap = new Subject<void>();
-  private _onAction = new Subject<any>();
+  private onTap = new Subject<void> ( )
+  private onAction = new Subject<any> ( )
 
-  constructor(
+  public constructor (
     public toastId: number,
     public config: IndividualConfig<ConfigPayload>,
     public message: string | null | undefined,
@@ -168,40 +168,33 @@ export class ToastPackage<ConfigPayload = any> {
     public toastType: string,
     public toastRef: ToastRef<any>,
   ) {
-    this.toastRef.afterClosed().subscribe(() => {
-      this._onAction.complete();
-      this._onTap.complete();
-    });
+    this.toastRef.afterClosedObservable ( ).subscribe ( ( ) => {
+      this.onAction.complete ( )
+      this.onTap.complete ( )
+    } )
   }
 
   /** Fired on click */
-  triggerTap(): void {
-    this._onTap.next();
-    if (this.config.tapToDismiss) {
-      this._onTap.complete();
+  public triggerTap ( ): void {
+    this.onTap.next ( )
+    if ( this.config.tapToDismiss ) {
+      this.onTap.complete ( )
     }
   }
 
-  onTap(): Observable<void> {
-    return this._onTap.asObservable();
+  public onTapObservable ( ): Observable<void> {
+    return this.onTap.asObservable ( )
   }
 
   /** available for use in custom toast */
-  triggerAction(action?: any): void {
-    this._onAction.next(action);
+  public triggerAction ( action?: any ): void {
+    this.onAction.next ( action )
   }
 
-  onAction(): Observable<void> {
-    return this._onAction.asObservable();
+  public onActionObservable ( ): Observable<void> {
+    return this.onAction.asObservable ( )
   }
 }
-
-/** @deprecated use GlobalConfig */
-export interface GlobalToastrConfig extends GlobalConfig {}
-/** @deprecated use IndividualConfig */
-export interface IndividualToastrConfig extends IndividualConfig {}
-/** @deprecated use IndividualConfig */
-export interface ToastrConfig extends IndividualConfig {}
 
 export const DefaultNoComponentGlobalConfig: GlobalConfig = {
   maxOpened: 0,
@@ -213,10 +206,10 @@ export const DefaultNoComponentGlobalConfig: GlobalConfig = {
   includeTitleDuplicates: false,
 
   iconClasses: {
-    error: 'toast-error',
-    info: 'toast-info',
-    success: 'toast-success',
-    warning: 'toast-warning',
+    error: "toast-error",
+    info: "toast-info",
+    success: "toast-success",
+    warning: "toast-warning",
   },
 
   // Individual
@@ -226,20 +219,20 @@ export const DefaultNoComponentGlobalConfig: GlobalConfig = {
   extendedTimeOut: 1000,
   enableHtml: false,
   progressBar: false,
-  toastClass: 'ngx-toastr',
-  positionClass: 'toast-top-right',
-  titleClass: 'toast-title',
-  messageClass: 'toast-message',
-  easing: 'ease-in',
+  toastClass: "ngx-toastr",
+  positionClass: "toast-top-right",
+  titleClass: "toast-title",
+  messageClass: "toast-message",
+  easing: "ease-in",
   easeTime: 300,
   tapToDismiss: true,
   onActivateTick: false,
-  progressAnimation: 'decreasing',
-};
-
-export interface ToastToken {
-  default: GlobalConfig;
-  config: Partial<GlobalConfig>;
+  progressAnimation: "decreasing",
 }
 
-export const TOAST_CONFIG = new InjectionToken<ToastToken>('ToastConfig');
+export interface ToastToken {
+  default: GlobalConfig
+  config: Partial<GlobalConfig>
+}
+
+export const TOAST_CONFIG = new InjectionToken<ToastToken> ( "ToastConfig" )

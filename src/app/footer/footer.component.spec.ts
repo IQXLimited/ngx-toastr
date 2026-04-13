@@ -1,9 +1,9 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing"
 
-import { GhButtonModule } from '@ctrl/ngx-github-buttons';
+import { GhButtonModule } from "@ctrl/ngx-github-buttons"
 
-import { FooterComponent } from './footer.component';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { FooterComponent } from "./footer.component"
+import { provideZonelessChangeDetection } from "@angular/core"
 
 describe ( "FooterComponent", ( ) => {
   let component: FooterComponent
