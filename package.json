@@ -5,7 +5,7 @@
     "type": "git",
     "url": "git+https://github.com/IQXLimited/ngx-toastr.git"
   },
-  "version": "2.0.0",
+  "version": "2.1.0",
   "license": "MIT",
   "author": "IQX Limited",
   "scripts": {
