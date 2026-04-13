@@ -1,17 +1,12 @@
-import { Component } from '@angular/core';
-import { GhButtonModule } from '@ctrl/ngx-github-buttons';
+import { ChangeDetectionStrategy, Component } from "@angular/core"
+import { GhButtonModule } from "@ctrl/ngx-github-buttons"
 
-@Component({
-    selector: 'app-header',
-    imports: [
-      GhButtonModule
-    ],
-    template: `
-    <header class="header mt-5 text-center">
-      <h1>Angular Toastr</h1>
-      <p style="color: #777" class="mb-1">Easy Toasts for Angular</p>
-      <gh-button user="IQXLimited" repo="ngx-toastr" [count]="true"></gh-button>
-    </header>
-  `,
-})
+@Component ( {
+  selector: "app-header",
+  imports: [
+    GhButtonModule
+  ],
+  templateUrl: "./header.component.html",
+  changeDetection: ChangeDetectionStrategy.OnPush
+} )
 export class HeaderComponent {}

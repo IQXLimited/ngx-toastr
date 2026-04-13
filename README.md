@@ -63,8 +63,6 @@ npm install @iqx-limited/ngx-toastr --save
 @import 'bootstrap/scss/functions';
 @import 'bootstrap/scss/variables';
 @import 'bootstrap/scss/mixins';
-// bootstrap 4
-@import 'ngx-toastr/toastr-bs4-alert';
 // boostrap 5
 @import 'ngx-toastr/toastr-bs5-alert';
 ```

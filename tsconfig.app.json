@@ -2,13 +2,21 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "composite": true,
     "outDir": "./out-tsc/app",
-    "types": []
+    "declaration": true,
+    "declarationMap": true,
+    "resolveJsonModule": true
   },
   "files": [
     "src/main.ts"
   ],
   "include": [
-    "src/**/*.d.ts"
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "package.json"
+  ],
+  "exclude": [
+    "src/**/*.spec.ts"
   ]
 }

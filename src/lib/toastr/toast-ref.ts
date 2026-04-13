@@ -1,86 +1,86 @@
-import { Observable, Subject } from 'rxjs';
-import { OverlayRef } from '../overlay/overlay-ref';
+import { Observable, Subject } from "rxjs"
+import { OverlayRef } from "../overlay/overlay-ref"
 
 /**
  * Reference to a toast opened via the Toastr service.
  */
 export class ToastRef<T> {
   /** The instance of component opened into the toast. */
-  componentInstance!: T;
+  public componentInstance!: T
 
   /** Count of duplicates of this toast */
-  private duplicatesCount = 0;
+  private duplicatesCount = 0
 
   /** Subject for notifying the user that the toast has finished closing. */
-  private _afterClosed = new Subject<void>();
+  private afterClosed = new Subject<void> ( )
   /** triggered when toast is activated */
-  private _activate = new Subject<void>();
+  private activate = new Subject<void> ( )
   /** notifies the toast that it should close before the timeout */
-  private _manualClose = new Subject<void>();
+  private manualClose = new Subject<void> ( )
   /** notifies the toast that it should reset the timeouts */
-  private _resetTimeout = new Subject<void>();
+  private resetTimeout = new Subject<void> ( )
   /** notifies the toast that it should count a duplicate toast */
-  private _countDuplicate = new Subject<number>();
+  private countDuplicate = new Subject<number> ( )
 
-  constructor(private _overlayRef: OverlayRef) {}
+  public constructor ( private overlayRef: OverlayRef ) {}
 
-  manualClose() {
-    this._manualClose.next();
-    this._manualClose.complete();
+  public manualCloseComplete ( ) {
+    this.manualClose.next ( )
+    this.manualClose.complete ( )
   }
 
-  manualClosed(): Observable<any> {
-    return this._manualClose.asObservable();
+  public manualClosed ( ): Observable<any> {
+    return this.manualClose.asObservable ( )
   }
 
-  timeoutReset(): Observable<any> {
-    return this._resetTimeout.asObservable();
+  public timeoutReset ( ): Observable<any> {
+    return this.resetTimeout.asObservable ( )
   }
 
-  countDuplicate(): Observable<number> {
-    return this._countDuplicate.asObservable();
+  public countDuplicateObservable ( ): Observable<number> {
+    return this.countDuplicate.asObservable ( )
   }
 
   /**
    * Close the toast.
    */
-  close(): void {
-    this._overlayRef.detach();
-    this._afterClosed.next();
-    this._manualClose.next();
-    this._afterClosed.complete();
-    this._manualClose.complete();
-    this._activate.complete();
-    this._resetTimeout.complete();
-    this._countDuplicate.complete();
+  public close ( ): void {
+    this.overlayRef.detach ( )
+    this.afterClosed.next ( )
+    this.manualClose.next ( )
+    this.afterClosed.complete ( )
+    this.manualClose.complete ( )
+    this.activate.complete ( )
+    this.resetTimeout.complete ( )
+    this.countDuplicate.complete ( )
   }
 
   /** Gets an observable that is notified when the toast is finished closing. */
-  afterClosed(): Observable<any> {
-    return this._afterClosed.asObservable();
+  public afterClosedObservable ( ): Observable<any> {
+    return this.afterClosed.asObservable ( )
   }
 
-  isInactive() {
-    return this._activate.isStopped;
+  public isInactive ( ) {
+    return this.activate.closed
   }
 
-  activate() {
-    this._activate.next();
-    this._activate.complete();
+  public activateComplete ( ) {
+    this.activate.next ( )
+    this.activate.complete ( )
   }
 
   /** Gets an observable that is notified when the toast has started opening. */
-  afterActivate(): Observable<any> {
-    return this._activate.asObservable();
+  public afterActivate ( ): Observable<any> {
+    return this.activate.asObservable ( )
   }
 
   /** Reset the toast timouts and count duplicates */
-  onDuplicate(resetTimeout: boolean, countDuplicate: boolean) {
-    if (resetTimeout) {
-      this._resetTimeout.next();
+  public onDuplicate ( resetTimeout: boolean, countDuplicate: boolean ) {
+    if ( resetTimeout ) {
+      this.resetTimeout.next ( )
     }
-    if (countDuplicate) {
-      this._countDuplicate.next(++this.duplicatesCount);
+    if ( countDuplicate ) {
+      this.countDuplicate.next ( ++this.duplicatesCount )
     }
   }
 }

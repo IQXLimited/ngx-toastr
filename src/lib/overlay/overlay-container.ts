@@ -1,15 +1,15 @@
-import { DOCUMENT } from '@angular/common';
-import { inject, Injectable, OnDestroy } from '@angular/core';
+import { DOCUMENT } from "@angular/common"
+import { inject, Injectable, OnDestroy } from "@angular/core"
 
 /** Container inside which all toasts will render. */
-@Injectable({ providedIn: 'root' })
+@Injectable ( { providedIn: "root" } )
 export class OverlayContainer implements OnDestroy {
-  protected _document = inject(DOCUMENT);
-  protected _containerElement!: HTMLElement;
+  protected document = inject ( DOCUMENT )
+  protected containerElement!: HTMLElement
 
-  ngOnDestroy() {
-    if (this._containerElement && this._containerElement.parentNode) {
-      this._containerElement.parentNode.removeChild(this._containerElement);
+  public ngOnDestroy ( ) {
+    if ( this.containerElement && this.containerElement.parentNode ) {
+      this.containerElement.parentNode.removeChild ( this.containerElement )
     }
   }
 
@@ -19,11 +19,11 @@ export class OverlayContainer implements OnDestroy {
    * the container in non-browser environments.
    * @returns the container element
    */
-  getContainerElement(): HTMLElement {
-    if (!this._containerElement) {
-      this._createContainer();
+  public getContainerElement ( ): HTMLElement {
+    if ( !this.containerElement ) {
+      this.createContainer ( )
     }
-    return this._containerElement;
+    return this.containerElement
   }
 
   /**
@@ -31,11 +31,11 @@ export class OverlayContainer implements OnDestroy {
    * with the 'cdk-overlay-container' class on the document body
    * and 'aria-live="polite"'
    */
-  protected _createContainer(): void {
-    const container = this._document.createElement('div');
-    container.classList.add('overlay-container');
-    container.setAttribute('aria-live','polite');
-    this._document.body.appendChild(container);
-    this._containerElement = container;
+  protected createContainer ( ): void {
+    const container = this.document.createElement ( "div" )
+    container.classList.add ( "overlay-container" )
+    container.setAttribute ( "aria-live","polite" )
+    this.document.body.appendChild ( container )
+    this.containerElement = container
   }
 }

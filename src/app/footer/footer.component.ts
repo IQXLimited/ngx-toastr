@@ -1,28 +1,11 @@
-import { Component, VERSION } from '@angular/core';
+import { ChangeDetectionStrategy, Component, VERSION } from "@angular/core"
 
-@Component({
-    selector: 'app-footer',
-    template: `
-  <footer class="footer mb-4 mt-5">
-    Angular {{ version }}
-    <br>
-    <a href="https://github.com/IQXLimited/ngx-toastr/blob/master/LICENSE">MIT license</a>
-    -
-    <a href="https://github.com/IQXLimited/ngx-toastr">Source</a>
-  </footer>
-  `,
-    styles: [
-        `
-      .footer {
-        line-height: 2;
-        text-align: center;
-        font-size: 11px;
-        font-family: var(--font-family-monospace);
-        color: #999;
-      }
-    `,
-    ],
-})
+@Component ( {
+  selector: "app-footer",
+  templateUrl: "./footer.component.html",
+  styleUrl: "./footer.component.scss",
+  changeDetection: ChangeDetectionStrategy.OnPush
+} )
 export class FooterComponent {
-  version = VERSION.full;
+  public version = VERSION.full
 }

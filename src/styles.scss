@@ -1,35 +1,17 @@
 @use "sass:color";
 
-// Configuration
-@import "bootstrap/scss/functions";
-@import "bootstrap/scss/variables";
+@use "bootstrap/scss/bootstrap" as *;
+// @import "bootstrap/scss/bootstrap";
+@use "lib/toastr";
+
 $enable-shadows: true;
 $enable-gradients: true;
-@import "bootstrap/scss/maps";
-@import "bootstrap/scss/mixins";
-@import "bootstrap/scss/utilities";
-
-// Layout & components
-@import "bootstrap/scss/root";
-@import "bootstrap/scss/reboot";
-@import "bootstrap/scss/type";
-@import "bootstrap/scss/containers";
-@import "bootstrap/scss/grid";
-@import "bootstrap/scss/forms";
-@import "bootstrap/scss/buttons";
-@import "bootstrap/scss/card";
-@import "bootstrap/scss/close";
-
-// Helpers
-@import "bootstrap/scss/helpers";
-
-// Utilities
-@import "bootstrap/scss/utilities/api";
 
 @import "notyf.css";
 
+
 .normal {
-  @import "lib/toastr";
+  @include toastr.styles();
 }
 
 body {

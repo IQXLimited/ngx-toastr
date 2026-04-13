@@ -1,12 +1,12 @@
-import { DefaultNoComponentGlobalConfig, GlobalConfig, TOAST_CONFIG } from './toastr-config';
-import { EnvironmentProviders, makeEnvironmentProviders, Provider } from '@angular/core';
-import { Toast } from './toast.component';
-import { DefaultNoAnimationsGlobalConfig, ToastNoAnimation } from './toast-noanimation.component';
+import { DefaultNoComponentGlobalConfig, GlobalConfig, TOAST_CONFIG } from "./toastr-config"
+import { EnvironmentProviders, makeEnvironmentProviders, Provider } from "@angular/core"
+import { ToastComponent } from "./toast.component"
+import { DefaultNoAnimationsGlobalConfig, ToastNoAnimationComponent } from "./toast-noanimation.component"
 
 export const DefaultGlobalConfig: GlobalConfig = {
   ...DefaultNoComponentGlobalConfig,
-  toastComponent: Toast,
-};
+  toastComponent: ToastComponent,
+}
 
 /**
  * @description
@@ -28,7 +28,7 @@ export const DefaultGlobalConfig: GlobalConfig = {
  *   ],
  * })
  */
-export const provideToastr = (config: Partial<GlobalConfig> = {}): EnvironmentProviders => {
+export const provideToastr = ( config: Partial<GlobalConfig> = {} ): EnvironmentProviders => {
   const providers: Provider[] = [
     {
       provide: TOAST_CONFIG,
@@ -37,10 +37,10 @@ export const provideToastr = (config: Partial<GlobalConfig> = {}): EnvironmentPr
         config,
       }
     }
-  ];
+  ]
 
-  return makeEnvironmentProviders(providers);
-};
+  return makeEnvironmentProviders ( providers )
+}
 
 /**
 *  @description
@@ -64,9 +64,9 @@ export const provideToastr = (config: Partial<GlobalConfig> = {}): EnvironmentPr
 * ```
 */
 
-export function provideToastrNoAnimation(config: Partial<GlobalConfig> = {}) {
-  return makeEnvironmentProviders([
-    ToastNoAnimation,
+export const provideToastrNoAnimation = ( config: Partial<GlobalConfig> = {} ): EnvironmentProviders => {
+  return makeEnvironmentProviders ( [
+    ToastNoAnimationComponent,
     {
       provide: TOAST_CONFIG,
       useValue: {
@@ -74,5 +74,5 @@ export function provideToastrNoAnimation(config: Partial<GlobalConfig> = {}) {
         config,
       },
     },
-  ])
+  ] )
 }

@@ -1,21 +1,27 @@
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+// In ESM, we have to "recreate" __dirname
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
+
 // Karma configuration file, see link for more information
 // https://karma-runner.github.io/1.0/config/configuration-file.html
 
-module.exports = function (config) {
+export default function (config) {
   config.set({
     basePath: '',
     frameworks: ['jasmine', '@angular-devkit/build-angular'],
     plugins: [
-      require('karma-jasmine'),
-      require('karma-chrome-launcher'),
-      require('karma-jasmine-html-reporter'),
-      require('karma-coverage-istanbul-reporter')
+      "karma-jasmine",
+      "karma-chrome-launcher",
+      "karma-jasmine-html-reporter",
+      "karma-coverage-istanbul-reporter"
     ],
     client: {
       clearContext: false, // leave Jasmine Spec Runner output visible in browser
     },
     coverageIstanbulReporter: {
-      dir: require('path').join(__dirname, './coverage/zzz'),
+      dir: join(__dirname, './coverage/zzz'),
       reports: ['html', 'lcovonly', 'text-summary'],
       fixWebpackSourcePaths: true,
     },

@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
-import { HomeComponent } from './home/home.component';
-import { HeaderComponent } from './header/header.component';
-import { FooterComponent } from './footer/footer.component';
+import { ChangeDetectionStrategy, Component } from "@angular/core"
+import { HomeComponent } from "./home/home.component"
+import { HeaderComponent } from "./header/header.component"
+import { FooterComponent } from "./footer/footer.component"
 
-@Component({
-  selector: 'app-root',
+@Component ( {
+  selector: "app-root",
   imports: [
     HomeComponent,
     HeaderComponent,
@@ -15,5 +15,6 @@ import { FooterComponent } from './footer/footer.component';
     <app-home></app-home>
     <app-footer></app-footer>
   `,
-})
+  changeDetection: ChangeDetectionStrategy.OnPush
+} )
 export class AppComponent {}

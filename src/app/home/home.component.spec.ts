@@ -1,14 +1,14 @@
-import { CommonModule } from '@angular/common';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule } from '@angular/forms';
+import { CommonModule } from "@angular/common"
+import { ComponentFixture, TestBed } from "@angular/core/testing"
+import { FormsModule } from "@angular/forms"
 
-import { provideToastr, Toast } from '../../lib/public_api';
-import { ActiveToast } from '../../lib/public_api';
-import { NotyfToast } from '../notyf.toast';
-import { PinkToast } from '../pink.toast';
-import { HomeComponent } from './home.component';
-import { firstValueFrom } from 'rxjs';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { provideToastr, ToastComponent } from "../../lib/public_api"
+import { ActiveToast } from "../../lib/public_api"
+import { NotyfToastComponent } from "../notyf.toast"
+import { PinkToastComponent } from "../pink.component"
+import { HomeComponent } from "./home.component"
+import { firstValueFrom } from "rxjs"
+import { provideZonelessChangeDetection } from "@angular/core"
 
 describe ( "HomeComponent", ( ) => {
   let component: HomeComponent
@@ -21,7 +21,7 @@ describe ( "HomeComponent", ( ) => {
       },
       providers: [
         provideZonelessChangeDetection ( ),
-        provideToastr( {
+        provideToastr ( {
           timeOut: 800,
           progressBar: true,
           enableHtml: true,
@@ -45,101 +45,101 @@ describe ( "HomeComponent", ( ) => {
     expect ( component ).toBeTruthy ( )
   } )
 
-  it('should trigger onShown', done => {
-    const opened: ActiveToast<Toast> | null = component.openToast();
-    expect(opened).toBeDefined();
+  it ( "should trigger onShown", done => {
+    const opened: ActiveToast<ToastComponent> | null = component.openToast ( )
+    expect ( opened ).toBeDefined ( )
     if ( opened?.onShown ) {
-      firstValueFrom ( opened.onShown ).then(() => {
-        done();
-      });
+      firstValueFrom ( opened.onShown ).then ( ( ) => {
+        done ( )
+      } )
     } else {
-      done.fail('onShown is not defined');
+      done.fail ( "onShown is not defined" )
     }
-  });
-  it('should trigger onHidden', done => {
-    const opened: ActiveToast<Toast> | null = component.openToast();
-    expect(opened?.portal).toBeDefined();
+  } )
+  it ( "should trigger onHidden", done => {
+    const opened: ActiveToast<ToastComponent> | null = component.openToast ( )
+    expect ( opened?.portal ).toBeDefined ( )
     if ( opened?.onHidden ) {
-      firstValueFrom ( opened.onHidden ).then(() => {
-        done();
-      });
+      firstValueFrom ( opened.onHidden ).then ( ( ) => {
+        done ( )
+      } )
     } else {
-      done.fail('onHidden is not defined');
+      done.fail ( "onHidden is not defined" )
     }
-  });
-  it('should trigger onTap', done => {
-    const opened: ActiveToast<Toast> | null = component.openToast();
-    expect(opened?.portal).toBeDefined();
+  } )
+  it ( "should trigger onTap", done => {
+    const opened: ActiveToast<ToastComponent> | null = component.openToast ( )
+    expect ( opened?.portal ).toBeDefined ( )
     if ( opened?.onTap ) {
-      firstValueFrom ( opened.onTap ).then(() => {
-        done();
-      });
+      firstValueFrom ( opened.onTap ).then ( ( ) => {
+        done ( )
+      } )
     } else {
-      done.fail('onTap is not defined');
+      done.fail ( "onTap is not defined" )
     }
-    opened?.portal.instance.tapToast();
-  });
-  it('should extend life on mouseover and exit', done => {
-    const opened: ActiveToast<Toast> | null = component.openToast();
-    opened?.portal.instance.stickAround();
-    opened?.portal.instance.delayedHideToast();
-    expect(opened?.portal.instance.options.timeOut).toBe(1000);
-    done();
-  });
-  it('should keep on mouse exit with extended timeout 0', done => {
-    component.options.extendedTimeOut = 0;
-    const opened: ActiveToast<Toast> | null = component.openToast();
-    opened?.portal.instance.stickAround();
-    opened?.portal.instance.delayedHideToast();
-    expect(opened?.portal.instance.options.timeOut).toBe(0);
-    done();
-  });
-  it('should trigger onShown for openPinkToast', done => {
-    const opened: ActiveToast<PinkToast> | null = component.openPinkToast();
-    expect(opened?.portal).toBeDefined();
+    opened?.portal.instance.tapToast ( )
+  } )
+  it ( "should extend life on mouseover and exit", done => {
+    const opened: ActiveToast<ToastComponent> | null = component.openToast ( )
+    opened?.portal.instance.stickAround ( )
+    opened?.portal.instance.delayedHideToast ( )
+    expect ( opened?.portal.instance.options.timeOut ).toBe ( 1000 )
+    done ( )
+  } )
+  it ( "should keep on mouse exit with extended timeout 0", done => {
+    component.options.extendedTimeOut = 0
+    const opened: ActiveToast<ToastComponent> | null = component.openToast ( )
+    opened?.portal.instance.stickAround ( )
+    opened?.portal.instance.delayedHideToast ( )
+    expect ( opened?.portal.instance.options.timeOut ).toBe ( 0 )
+    done ( )
+  } )
+  it ( "should trigger onShown for openPinkToast", done => {
+    const opened: ActiveToast<PinkToastComponent> | null = component.openPinkToast ( )
+    expect ( opened?.portal ).toBeDefined ( )
     if ( opened?.onShown ) {
-      firstValueFrom ( opened.onShown ).then(() => {
-        done();
-      });
+      firstValueFrom ( opened.onShown ).then ( ( ) => {
+        done ( )
+      } )
     } else {
-      done.fail('onShown is not defined');
+      done.fail ( "onShown is not defined" )
     }
-  });
-  it('should trigger onHidden for openPinkToast', done => {
-    const opened: ActiveToast<PinkToast> | null = component.openPinkToast();
-    expect(opened?.portal).toBeDefined();
+  } )
+  it ( "should trigger onHidden for openPinkToast", done => {
+    const opened: ActiveToast<PinkToastComponent> | null = component.openPinkToast ( )
+    expect ( opened?.portal ).toBeDefined ( )
     if ( opened?.onHidden ) {
-      firstValueFrom ( opened.onHidden ).then(() => {
-        done();
-      });
+      firstValueFrom ( opened.onHidden ).then ( ( ) => {
+        done ( )
+      } )
     } else {
-      done.fail('onHidden is not defined');
+      done.fail ( "onHidden is not defined" )
     }
-  });
-  it('should trigger onShown for openNotyf', done => {
-    const opened: ActiveToast<NotyfToast> | null = component.openNotyf();
-    expect(opened?.portal).toBeDefined();
+  } )
+  it ( "should trigger onShown for openNotyf", done => {
+    const opened: ActiveToast<NotyfToastComponent> | null = component.openNotyf ( )
+    expect ( opened?.portal ).toBeDefined ( )
     if ( opened?.onShown ) {
-      firstValueFrom ( opened.onShown ).then(() => {
-        done();
-      });
+      firstValueFrom ( opened.onShown ).then ( ( ) => {
+        done ( )
+      } )
     } else {
-      done.fail('onShown is not defined');
+      done.fail ( "onShown is not defined" )
     }
-  });
-  it('should trigger onHidden for openNotyf', done => {
-    const opened: ActiveToast<NotyfToast> | null = component.openNotyf();
-    expect(opened?.portal).toBeDefined();
+  } )
+  it ( "should trigger onHidden for openNotyf", done => {
+    const opened: ActiveToast<NotyfToastComponent> | null = component.openNotyf ( )
+    expect ( opened?.portal ).toBeDefined ( )
     if ( opened?.onHidden ) {
-      firstValueFrom ( opened.onHidden ).then(() => {
-        done();
-      });
+      firstValueFrom ( opened.onHidden ).then ( ( ) => {
+        done ( )
+      } )
     } else {
-      done.fail('onHidden is not defined');
+      done.fail ( "onHidden is not defined" )
     }
-  });
-  it('should have defined componentInstance', () => {
-    const opened: ActiveToast<Toast> | null = component.openToast();
-    expect(opened?.toastRef.componentInstance).toBeDefined();
-  })
-});
+  } )
+  it ( "should have defined componentInstance", ( ) => {
+    const opened: ActiveToast<ToastComponent> | null = component.openToast ( )
+    expect ( opened?.toastRef.componentInstance ).toBeDefined ( )
+  } )
+} )

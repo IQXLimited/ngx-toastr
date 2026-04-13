@@ -2,10 +2,10 @@ import {
   ComponentRef,
   Injector,
   ViewContainerRef
-} from '@angular/core';
+} from "@angular/core"
 
 export interface ComponentType<T> {
-  new (...args: any[]): T;
+  new ( ...args: any[] ): T
 }
 
 
@@ -13,51 +13,52 @@ export interface ComponentType<T> {
  * A `ComponentPortal` is a portal that instantiates some Component upon attachment.
  */
 export class ComponentPortal<T> {
-  private _attachedHost?: BasePortalHost;
   /** The type of the component that will be instantiated for attachment. */
-  component: ComponentType<T>;
+  public component: ComponentType<T>
 
   /**
    * [Optional] Where the attached component should live in Angular's *logical* component tree.
    * This is different from where the component *renders*, which is determined by the PortalHost.
    * The origin necessary when the host is outside of the Angular application context.
    */
-  viewContainerRef!: ViewContainerRef;
+  public viewContainerRef!: ViewContainerRef
 
   /** Injector used for the instantiation of the component. */
-  injector: Injector;
+  public injector: Injector
 
-  constructor(component: ComponentType<T>, injector: Injector) {
-    this.component = component;
-    this.injector = injector;
-  }
+  private attachedHost?: BasePortalHost
 
-  /** Attach this portal to a host. */
-  attach(host: BasePortalHost, newestOnTop: boolean): ComponentRef<any> {
-    this._attachedHost = host;
-    return host.attach(this, newestOnTop);
-  }
-
-  /** Detach this portal from its host */
-  detach() {
-    const host = this._attachedHost;
-    if (host) {
-      this._attachedHost = undefined;
-      return host.detach();
-    }
+  public constructor ( component: ComponentType<T>, injector: Injector ) {
+    this.component = component
+    this.injector = injector
   }
 
   /** Whether this portal is attached to a host. */
-  get isAttached(): boolean {
-    return this._attachedHost != null;
+  public get isAttached ( ): boolean {
+    return this.attachedHost != null
+  }
+
+  /** Attach this portal to a host. */
+  public attach ( host: BasePortalHost, newestOnTop: boolean ): ComponentRef<any> {
+    this.attachedHost = host
+    return host.attach ( this, newestOnTop )
+  }
+
+  /** Detach this portal from its host */
+  public detach ( ) {
+    const host = this.attachedHost
+    if ( host ) {
+      this.attachedHost = undefined
+      return host.detach ( )
+    }
   }
 
   /**
-   * Sets the PortalHost reference without performing `attach()`. This is used directly by
-   * the PortalHost when it is performing an `attach()` or `detach()`.
+   * Sets the PortalHost reference without performing `attach ( )`. This is used directly by
+   * the PortalHost when it is performing an `attach ( )` or `detach ( )`.
    */
-  setAttachedHost(host?: BasePortalHost) {
-    this._attachedHost = host;
+  public setAttachedHost ( host?: BasePortalHost ) {
+    this.attachedHost = host
   }
 }
 
@@ -67,31 +68,31 @@ export class ComponentPortal<T> {
  */
 export abstract class BasePortalHost {
   /** The portal currently attached to the host. */
-  private _attachedPortal?: ComponentPortal<any>;
+  private attachedPortal?: ComponentPortal<any>
 
   /** A function that will permanently dispose this host. */
-  private _disposeFn?: () => void;
+  private disposeFn?: ( ) => void
 
-  attach(portal: ComponentPortal<any>, newestOnTop: boolean) {
-    this._attachedPortal = portal;
-    return this.attachComponentPortal(portal, newestOnTop);
+  public attach ( portal: ComponentPortal<any>, newestOnTop: boolean ) {
+    this.attachedPortal = portal
+    return this.attachComponentPortal ( portal, newestOnTop )
   }
 
-  abstract attachComponentPortal<T>(portal: ComponentPortal<T>, newestOnTop: boolean): ComponentRef<T>;
-
-  detach() {
-    if (this._attachedPortal) {
-      this._attachedPortal.setAttachedHost();
+  public detach ( ) {
+    if ( this.attachedPortal ) {
+      this.attachedPortal.setAttachedHost ( )
     }
 
-    this._attachedPortal = undefined;
-    if (this._disposeFn) {
-      this._disposeFn();
-      this._disposeFn = undefined;
+    this.attachedPortal = undefined
+    if ( this.disposeFn ) {
+      this.disposeFn ( )
+      this.disposeFn = undefined
     }
   }
 
-  setDisposeFn(fn: () => void) {
-    this._disposeFn = fn;
+  public setDisposeFn ( fn: ( ) => void ) {
+    this.disposeFn = fn
   }
+
+  public abstract attachComponentPortal<T>( portal: ComponentPortal<T>, newestOnTop: boolean ): ComponentRef<T>
 }
