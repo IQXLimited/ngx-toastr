@@ -1,4 +1,4 @@
-> **Note:** This repository is a fork of [ngx-toastr](https://github.com/scttcper/ngx-toastr). It builds upon the original project to provide additional features, fixes, or customizations.
+> **Note:** This repository is a fork of [ngx-toastr](https://github.com/scttcper/ngx-toastr). It builds upon the original project to provide additional features, fixes, and customizations.
 
 -------------------------------------------------------------------------------
 
@@ -9,7 +9,6 @@
   <br>
   <a href="https://www.npmjs.com/package/@iqx-limited/ngx-toastr">
     <img src="https://badge.fury.io/js/@iqx-limited%2Fngx-toastr.svg" alt="npm">
-  </a>
   <br>
   <br>
 </div>
@@ -18,83 +17,108 @@ DEMO: https://iqxlimited.github.io/ngx-toastr/
 
 ## Features
 
-- Toast Component Injection without being passed `ViewContainerRef`
-- No use of `@for`. Fewer dirty checks and higher performance.
+- Toast component injection without being passed `ViewContainerRef`
 - AoT compilation and lazy loading compatible
 - Component inheritance for custom toasts
-- SystemJS/UMD rollup bundle
-- Animations using Pure CSS Animations
+- Animations using pure CSS transitions
 - Output toasts to an optional target directive
+- Zoneless Angular compatible
+
+See [CHANGELOG.md](./CHANGELOG.md) for 3.x migration notes.
 
 ## Dependencies
 
-Latest version available for each version of Angular
+| ngx-toastr | Angular |
+| ---------- | ------- |
+| 1.x        | 20.x    |
+| 2.x        | 21.x    |
+| 3.x        | 22.x    |
 
-| ngx-toastr | Angular     |
-| ---------- | ----------- |
-| 1.0.0      | 20.x        |
-| 2.0.0      | 21.x        |
-| 3.0.0      | 22.x.       |
+Peer dependencies: `@angular/core`, `@angular/common`, and `@angular/platform-browser` >= 20.
 
 ## Install
 
 ```bash
-npm install @iqx-limited/ngx-toastr --save
+npm install @iqx-limited/ngx-toastr
 ```
 
 ## Setup
 
-**step 1:** add css
+### Step 1: Add styles
 
-- copy [toast scss](/src/lib/toastr.scss) to your project.
+**Option A — import in global styles (recommended)**
 
 ```scss
-// regular style toast
-@import 'ngx-toastr/toastr';
+// Default toast styles — use the package export path, not node_modules/
+@import "@iqx-limited/ngx-toastr/toastr";
 
-// if you'd like to use it without importing all of bootstrap it requires
-@import 'bootstrap/scss/functions';
-@import 'bootstrap/scss/variables';
-@import 'bootstrap/scss/mixins';
-// boostrap 5
-@import 'ngx-toastr/toastr-bs5-alert';
+// Optional: Bootstrap alert-style toast (SASS only)
+// Import after your Bootstrap functions, variables, and mixins
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
+@import "@iqx-limited/ngx-toastr/toastr-bs-alert";
 ```
 
-- If you are using angular-cli you can add it to your angular.json
+**Option B — add to `angular.json`**
 
-```ts
+```json
 "styles": [
-  "styles.scss",
-  "node_modules/ngx-toastr/toastr.scss" // try adding '../' if you're using angular cli before 6
+  "src/styles.scss",
+  "node_modules/@iqx-limited/ngx-toastr/toastr.css"
 ]
 ```
 
-**step 2:** add `provideToastr`, or `provideToastrNoAnimation`, to providers.
+Published style exports (files ship at the package root):
 
-- Standalone
+| Import path | Resolves to |
+| ----------- | ----------- |
+| `@iqx-limited/ngx-toastr/toastr` | `toastr.css` |
+| `@iqx-limited/ngx-toastr/toastr.css` | `toastr.css` |
+| `@iqx-limited/ngx-toastr/toastr-bs-alert` | `toastr-bs-alert.scss` |
+| `@iqx-limited/ngx-toastr/toastr-bs-alert.scss` | `toastr-bs-alert.scss` |
+
+### Step 2: Add providers
 
 ```typescript
-import { AppComponent } from './src/app.component';
-import { provideToastr } from '@iqx-limited/ngx-toastr';
+import { bootstrapApplication } from "@angular/platform-browser"
+import { AppComponent } from "./app/app.component"
+import { provideToastr } from "@iqx-limited/ngx-toastr"
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideToastr(), // Toastr providers
-  ]
-});
+    provideToastr(),
+  ],
+})
+```
+
+For toasts without CSS enter/exit animations (uses `display: none` instead):
+
+```typescript
+import { provideToastrNoAnimation } from "@iqx-limited/ngx-toastr"
+
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideToastrNoAnimation(),
+  ],
+})
 ```
 
 ## Use
 
 ```typescript
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { Component, inject } from "@angular/core"
+import { ToastrService } from "@iqx-limited/ngx-toastr"
 
-@Component({...})
-export class YourComponent {
-  constructor(private toastr: ToastrService) {}
+@Component({
+  selector: "app-example",
+  template: `<button (click)="showSuccess()">Show toast</button>`,
+})
+export class ExampleComponent {
+  private readonly toastr = inject(ToastrService)
 
   showSuccess() {
-    this.toastr.success('Hello world!', 'Toastr fun!');
+    this.toastr.success("Hello world!", "Toastr fun!")
   }
 }
 ```
@@ -103,200 +127,194 @@ export class YourComponent {
 
 There are **individual options** and **global options**.
 
-### Individual Options
+### Individual options
 
-Passed to `ToastrService.success/error/warning/info/show()`
+Passed to `ToastrService.success()`, `error()`, `warning()`, `info()`, or `show()`.
 
-| Option            | Type                           | Default                        | Description
-| ----------------- | ------------------------------ | ------------------------------ | ------------------------------------------------- |
-| toastComponent    | Component                      | Toast                          | Angular component that will be used               |
-| closeButton       | boolean                        | false                          | Show close button                                 |
-| timeOut           | number                         | 5000                           | Time to live in milliseconds                      |
-| extendedTimeOut   | number                         | 1000                           | Time to close after a user hovers over toast      |
-| disableTimeOut    | `boolean \| 'timeOut' \| 'extendedTimeOut'`  | false              | Disable both timeOut and extendedTimeOut when set to `true`. Allows specifying which timeOut to disable, either: `timeOut` or `extendedTimeOut` |
-| easing            | string                         | 'ease-in'                      | Toast component easing                            |
-| easeTime          | string \| number               | 300                            | Time spent easing                                 |
-| enableHtml        | boolean                        | false                          | Allow html in message                             |
-| newestOnTop       | boolean                        | true                           | New toast placement                               |
-| progressBar       | boolean                        | false                          | Show progress bar                                 |
-| progressAnimation | `'decreasing' \| 'increasing'` | 'decreasing'                   | Changes the animation of the progress bar.        |
-| toastClass        | string                         | 'ngx-toastr'                   | CSS class(es) for toast                           |
-| positionClass     | string                         | 'toast-top-right'              | CSS class(es) for toast container                 |
-| titleClass        | string                         | 'toast-title'                  | CSS class(es) for inside toast on title           |
-| messageClass      | string                         | 'toast-message'                | CSS class(es) for inside toast on message         |
-| tapToDismiss      | boolean                        | true                           | Close on click                                    |
-| onActivateTick    | boolean                        | false                          | Fires `changeDetectorRef.detectChanges()` when activated. Helps show toast from asynchronous events outside of Angular's change detection |
+| Option | Type | Default | Description |
+| ------ | ---- | ------- | ----------- |
+| toastComponent | `Component` | `Toast` | Angular component used to render the toast |
+| closeButton | `boolean` | `false` | Show close button |
+| timeOut | `number` | `5000` | Time to live in milliseconds |
+| extendedTimeOut | `number` | `1000` | Time to close after hover ends |
+| disableTimeOut | `boolean \| 'timeOut' \| 'extendedTimeOut'` | `false` | Disable timeout behaviour |
+| easing | `string` | `'ease-in'` | CSS easing for animated toasts |
+| easeTime | `string \| number` | `300` | CSS transition duration (ms) |
+| enableHtml | `boolean` | `false` | Allow HTML in message (sanitized) |
+| newestOnTop | `boolean` | `true` | Insert new toasts at the top |
+| progressBar | `boolean` | `false` | Show progress bar |
+| progressAnimation | `'decreasing' \| 'increasing'` | `'decreasing'` | Progress bar direction |
+| toastClass | `string` | `'ngx-toastr'` | CSS class on toast element |
+| positionClass | `string` | `'toast-top-right'` | CSS class on toast container |
+| titleClass | `string` | `'toast-title'` | CSS class on title |
+| messageClass | `string` | `'toast-message'` | CSS class on message |
+| tapToDismiss | `boolean` | `true` | Close on click |
+| onActivateTick | `boolean` | `false` | Call `ApplicationRef.tick()` when a no-animation toast activates |
 
-#### Setting Individual Options
-
-success, error, info, warning take `(message, title, ToastConfig)` pass an
-options object to replace any default option.
+#### Setting individual options
 
 ```typescript
-this.toastrService.error('everything is broken', 'Major Error', {
+this.toastr.error("everything is broken", "Major Error", {
   timeOut: 3000,
-});
+})
 ```
 
-### Global Options
+### Global options
 
-All [individual options](#individual-options) can be overridden in the global
-options to affect all toasts. In addition, global options include the following
-options:
+All [individual options](#individual-options) can be set globally via `provideToastr()` / `provideToastrNoAnimation()`.
 
-| Option                  | Type    | Default                            | Description                                                                                                   |
-| ----------------------- | ------- | ---------------------------------- | ------------------------------------------------------------------ |
-| maxOpened               | number  | 0                                  | Max toasts opened. Toasts will be queued. 0 is unlimited           |
-| autoDismiss             | boolean | false                              | Dismiss current toast when max is reached                          |
-| iconClasses             | object  | [see below](#iconclasses-defaults) | Classes used on toastr service methods                             |
-| preventDuplicates       | boolean | false                              | Block duplicate messages                                           |
-| countDuplicates         | boolean | false                              | Displays a duplicates counter (preventDuplicates must be true). Toast must have a title and duplicate message |
-| resetTimeoutOnDuplicate | boolean | false                              | Reset toast timeout on duplicate (preventDuplicates must be true)  |
-| includeTitleDuplicates  | boolean | false                              | Include the title of a toast when checking for duplicates (by default only message is compared) |
+| Option | Type | Default | Description |
+| ------ | ---- | ------- | ----------- |
+| maxOpened | `number` | `0` | Max open toasts (0 = unlimited) |
+| autoDismiss | `boolean` | `false` | Dismiss oldest toast when max is reached |
+| iconClasses | `object` | [see below](#iconclasses-defaults) | CSS classes per toast type |
+| preventDuplicates | `boolean` | `false` | Block duplicate messages |
+| countDuplicates | `boolean` | `false` | Show duplicate counter |
+| resetTimeoutOnDuplicate | `boolean` | `false` | Reset timeout on duplicate |
+| includeTitleDuplicates | `boolean` | `false` | Compare title when checking duplicates |
 
 ##### iconClasses defaults
 
 ```typescript
 iconClasses = {
-  error: 'toast-error',
-  info: 'toast-info',
-  success: 'toast-success',
-  warning: 'toast-warning',
-};
+  error: "toast-error",
+  info: "toast-info",
+  success: "toast-success",
+  warning: "toast-warning",
+}
 ```
 
-#### Setting Global Options
-
-Pass values to `provideToastr()` to set global options.
+#### Setting global options
 
 ```typescript
-import { AppComponent } from './src/app.component';
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideToastr } from '@iqx-limited/ngx-toastr';
+import { bootstrapApplication } from "@angular/platform-browser"
+import { provideToastr } from "@iqx-limited/ngx-toastr"
+import { AppComponent } from "./app/app.component"
 
 bootstrapApplication(AppComponent, {
   providers: [
     provideToastr({
       timeOut: 10000,
-      positionClass: 'toast-bottom-right',
+      positionClass: "toast-bottom-right",
       preventDuplicates: true,
     }),
-  ]
-});
+  ],
+})
 ```
 
-
-### Toastr Service methods return:
+### Toastr service return value
 
 ```typescript
-export interface ActiveToast {
-  /** Your Toast ID. Use this to close it individually */
-  toastId: number;
-  /** the title of your toast. Stored to prevent duplicates if includeTitleDuplicates set */
-  title: string;
-  /** the message of your toast. Stored to prevent duplicates */
-  message: string;
-  /** a reference to the component see portal.ts */
-  portal: ComponentRef<any>;
-  /** a reference to your toast */
-  toastRef: ToastRef<any>;
-  /** triggered when toast is active */
-  onShown: Observable<any>;
-  /** triggered when toast is destroyed */
-  onHidden: Observable<any>;
-  /** triggered on toast click */
-  onTap: Observable<any>;
-  /** available for your use in custom toast */
-  onAction: Observable<any>;
+export interface ActiveToast<C = unknown> {
+  toastId: number
+  title: string
+  message: string
+  portal: ComponentRef<C>
+  toastRef: ToastRef<C>
+  onShown: Observable<void>
+  onHidden: Observable<void>
+  onTap: Observable<void>
+  onAction: Observable<unknown>
 }
 ```
 
-### Put toasts in your own container
+## Custom toast components
 
-Put toasts in a specific div inside your application. This should probably be
-somewhere that doesn't get deleted. Make sure that your container has
-an `aria-live="polite"` attribute, so that any time a toast is injected into
-the container it is announced by screen readers.
-
-Add a div with `toastContainer` directive on it.
+Extend `Toast` (animated) or `NoAnimationToast` and pass your component via `toastComponent`:
 
 ```typescript
-import { Component, OnInit, ViewChild } from '@angular/core';
-
-import { ToastContainerDirective, ToastrService } from '@iqx-limited/ngx-toastr';
+import { Component } from "@angular/core"
+import { Toast, ToastrService } from "@iqx-limited/ngx-toastr"
 
 @Component({
-  selector: 'app-root',
+  selector: "[my-toast-component]",
   template: `
-    <h1><a (click)="onClick()">Click</a></h1>
+    <div>{{ title }} — {{ message }}</div>
+    <button (click)="remove()">Close</button>
+  `,
+})
+export class MyToast extends Toast {
+  // ToastrService and ToastPackage are available on the base class
+}
+```
+
+```typescript
+this.toastr.show("Saved!", "Done", {
+  toastComponent: MyToast,
+})
+```
+
+> **Note:** `ToastNoAnimation` is deprecated. Use `NoAnimationToast` instead (the alias remains exported for backwards compatibility).
+
+## Custom toast container
+
+Place toasts inside a specific element using the `toastContainer` directive. The container should have `aria-live="polite"`.
+
+```typescript
+import { Component, inject, OnInit, ViewChild } from "@angular/core"
+import { ToastContainerDirective, ToastrService } from "@iqx-limited/ngx-toastr"
+
+@Component({
+  selector: "app-root",
+  template: `
+    <button (click)="onClick()">Show toast</button>
     <div aria-live="polite" toastContainer></div>
   `,
 })
 export class AppComponent implements OnInit {
   @ViewChild(ToastContainerDirective, { static: true })
-  toastContainer: ToastContainerDirective;
+  toastContainer!: ToastContainerDirective
 
-  constructor(private toastrService: ToastrService) {}
+  private readonly toastrService = inject(ToastrService)
+
   ngOnInit() {
-    this.toastrService.overlayContainer = this.toastContainer;
+    this.toastrService.overlayContainer = this.toastContainer
   }
+
   onClick() {
-    this.toastrService.success('in div');
+    this.toastrService.success("in div")
   }
 }
 ```
 
-## Functions
+## API
 
-##### Clear
+### Clear
 
-Remove all or a single toast by optional id
-
-```ts
-toastrService.clear(toastId?: number);
-```
-
-##### Remove
-
-Remove and destroy a single toast by id
-
-```
-toastrService.remove(toastId: number);
-```
-
-## SystemJS
-
-If you are using SystemJS, you should also adjust your configuration to point to
-the UMD bundle.
-
-In your SystemJS config file, `map` needs to tell the System loader where to
-look for `ngx-toastr`:
-
-```js
-map: {
-  'ngx-toastr': 'node_modules/ngx-toastr/bundles/ngx-toastr.umd.min.js',
-}
-```
-
-## Using A Custom Toast
-
-Create your toast component extending Toast see the demo's pink toast for an example
-https://github.com/IQXLimited/ngx-toastr/blob/master/src/app/pink.toast.ts
+Remove all toasts, or a single toast by id:
 
 ```typescript
-import { ToastrModule } from '@iqx-limited/ngx-toastr';
-
-@NgModule({
-  imports: [
-    ToastrModule.forRoot({
-      toastComponent: YourToastComponent, // added custom toast!
-    }),
-  ],
-  bootstrap: [App],
-  declarations: [App, YourToastComponent], // add!
-})
-class AppModule {}
+toastrService.clear()
+toastrService.clear(toastId)
 ```
+
+### Remove
+
+Remove and destroy a single toast by id:
+
+```typescript
+toastrService.remove(toastId)
+```
+
+## Development
+
+This repo is an Angular workspace with two projects:
+
+| Project | Path | Purpose |
+| ------- | ---- | ------- |
+| Library | `projects/ngx-toastr/` | Published npm package (`@iqx-limited/ngx-toastr`) |
+| Demo | `projects/demo/` | GitHub Pages demo app |
+
+```bash
+npm ci
+npm run build          # Build library → dist/
+npm start              # Serve demo at http://localhost:4200
+npm run demo:build     # Build demo → dist-demo/
+npm test               # tsc-verify + unit tests
+npm run lint           # ESLint
+```
+
+The library `package.json` at `projects/ngx-toastr/package.json` is synced from the root manifest before each build via `npm run sync-package`.
 
 ## License
 

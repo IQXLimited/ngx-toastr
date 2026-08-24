@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [
+    "projects/demo/src/**/*.ts",
+    "projects/ngx-toastr/src/**/*.ts"
+  ],
+  "exclude": []
+}

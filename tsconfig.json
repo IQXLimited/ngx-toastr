@@ -1,7 +1,11 @@
-/* To learn more about this file see: https://angular.io/config/tsconfig. */
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "paths": {
+      "@iqx-limited/ngx-toastr": [
+        "./projects/ngx-toastr/src/public_api.ts"
+      ]
+    },
     "rootDir": "./",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
@@ -10,6 +14,8 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
     "esModuleInterop": true,
     "sourceMap": true,
     "declaration": false,
@@ -20,8 +26,13 @@
     "module": "ES2022",
     "useDefineForClassFields": false
   },
+  "include": [
+    "projects/demo/src/**/*.ts",
+    "projects/ngx-toastr/src/**/*.ts"
+  ],
   "exclude": [
-    "src/**/*.spec.ts"
+    "projects/demo/src/**/*.spec.ts",
+    "projects/ngx-toastr/src/**/*.spec.ts"
   ],
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

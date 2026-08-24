@@ -1,0 +1,53 @@
+{
+  "name": "@iqx-limited/ngx-toastr",
+  "version": "4.0.0",
+  "peerDependencies": {
+    "@angular/core": ">=20.0.0-0",
+    "@angular/common": ">=20.0.0-0",
+    "@angular/platform-browser": ">=20.0.0-0"
+  },
+  "exports": {
+    "./toastr": {
+      "default": "./toastr.css"
+    },
+    "./toastr.css": {
+      "default": "./toastr.css"
+    },
+    "./toastr-bs-alert": {
+      "default": "./toastr-bs-alert.scss"
+    },
+    "./toastr-bs-alert.scss": {
+      "default": "./toastr-bs-alert.scss"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IQXLimited/ngx-toastr.git"
+  },
+  "author": "IQX Limited",
+  "license": "MIT",
+  "description": "Toastr for Angular",
+  "keywords": [
+    "ng2",
+    "ngx",
+    "ngx-toastr",
+    "toastr-ng2",
+    "angular",
+    "angular2",
+    "typescript",
+    "alert",
+    "toast",
+    "toastr",
+    "angular toastr",
+    "notifications"
+  ],
+  "ng-update": {},
+  "publishConfig": {
+    "access": "public"
+  },
+  "release": {
+    "branches": [
+      "master"
+    ]
+  }
+}

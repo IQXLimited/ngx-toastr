@@ -33,12 +33,10 @@ jobs:
     if: github.event.pull_request.base.repo.owner.login == 'IQXLimited' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7
 
       - name: Setup Node
         uses: actions/setup-node@v6.4.0
-        with:
-          node-version: 24
 
       - name: Install dependencies
         run: PUPPETEER_SKIP_DOWNLOAD=true npm ci
@@ -53,7 +51,7 @@ jobs:
         run: npm run build
 
       - name: Upload coverage reports
-        uses: actions/upload-artifact@v6.0.0
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: coverage-report
           path: coverage/
@@ -68,7 +66,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7
         with:
           fetch-depth: 2
 
@@ -76,18 +74,15 @@ jobs:
         id: check-demo-changes
         run: |
           # Check if any demo-related files have changed
-          if git diff --name-only HEAD^ HEAD | grep -E "(^src/app/|^src/assets/|^src/index.html|^src/styles.scss|^src/environments/|^angular.json|^package.json)" > /dev/null; then
+          if git diff --name-only HEAD^ HEAD | grep -E "(^projects/demo/|^projects/ngx-toastr/|^angular.json|^package.json)" > /dev/null; then
             echo "demo-changed=true" >> $GITHUB_OUTPUT
             echo "Demo files changed, will deploy to GitHub Pages"
           else
             echo "demo-changed=false" >> $GITHUB_OUTPUT
             echo "No demo files changed, skipping GitHub Pages deployment"
           fi
-
       - name: Setup Node
         uses: actions/setup-node@v6.4.0
-        with:
-          node-version: 24
 
       - name: Install dependencies
         if: steps.check-demo-changes.outputs.demo-changed == 'true'
@@ -105,7 +100,7 @@ jobs:
         if: steps.check-demo-changes.outputs.demo-changed == 'true'
         uses: actions/upload-pages-artifact@v5.0.0
         with:
-          path: ./dist/browser
+          path: ./dist-demo/browser
 
       - name: Deploy to GitHub Pages
         if: steps.check-demo-changes.outputs.demo-changed == 'true'
@@ -119,7 +114,7 @@ jobs:
     if: ( github.event.pull_request.base.repo.owner.login == 'IQXLimited' && github.event.pull_request.merged == true ) || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7
         with:
           token: ${{ secrets.GH_CHECKOUT_PAT }}
           fetch-depth: 2
@@ -127,7 +122,6 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6.4.0
         with:
-          node-version: 24
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
@@ -137,7 +131,6 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
       - name: Determine version type from PR title
         id: version_type
         run: |
@@ -148,7 +141,6 @@ jobs:
             # Get the most recent merge commit message (which contains PR title)
             PR_TITLE=$(git log --oneline -1 --pretty=format:"%s")
             echo "PR Title: $PR_TITLE"
-
             # Check for version indicators in PR title (case insensitive)
             if echo "$PR_TITLE" | grep -iE '\[major\]|major:|BREAKING' > /dev/null; then
               VERSION_TYPE="major"
@@ -161,28 +153,17 @@ jobs:
               echo "Using default PATCH version"
             fi
           fi
-
           echo "version_type=$VERSION_TYPE" >> $GITHUB_OUTPUT
           echo "Selected version type: $VERSION_TYPE"
-
       - name: Increment version
         id: version
         run: |
           VERSION_TYPE="${{ steps.version_type.outputs.version_type }}"
           npm version $VERSION_TYPE --no-git-tag-version
           NEW_VERSION=$(node -p "require('./package.json').version")
-
-          # Update the library's package.json version too
-          node -e "
-            const fs = require('fs');
-            const libPkg = JSON.parse(fs.readFileSync('src/lib/package.json', 'utf8'));
-            libPkg.version = '$NEW_VERSION';
-            fs.writeFileSync('src/lib/package.json', JSON.stringify(libPkg, null, 2) + '\n');
-          "
-
+          npm run sync-package
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
           echo "New version: $NEW_VERSION (incremented as $VERSION_TYPE)"
-
       - name: Build package
         run: npm run build
 
@@ -193,7 +174,7 @@ jobs:
 
       - name: Commit version change
         run: |
-          git add package.json package-lock.json src/lib/package.json
+          git add package.json package-lock.json projects/ngx-toastr/package.json
           git commit -m "chore: bump version to v${{ steps.version.outputs.new_version }} [skip ci]"
           git tag "v${{ steps.version.outputs.new_version }}"
           git push origin master --tags
